@@ -1,0 +1,102 @@
+{% include "qms-templates/header.html" %}
+
+<style>
+  .wrap{
+    max-width:900px;
+    margin:18px auto 0;
+    padding:0 18px 28px;
+  }
+
+  .card{
+    background:#fff;
+    border:1px solid rgba(11,18,32,.10);
+    border-radius:18px;
+    box-shadow:0 14px 30px rgba(0,0,0,.08);
+    padding:22px;
+  }
+
+  h2{
+    margin-top:0;
+    font-weight:900;
+  }
+
+  .form-row{
+    margin-bottom:14px;
+  }
+
+  label{
+    font-weight:700;
+    display:block;
+    margin-bottom:6px;
+  }
+
+  input, textarea, select{
+    width:100%;
+    padding:10px;
+    border-radius:10px;
+    border:1px solid rgba(0,0,0,.15);
+  }
+
+  .btn{
+    padding:10px 16px;
+    border-radius:10px;
+    border:0;
+    background:#006EB3;
+    color:#fff;
+    font-weight:700;
+    cursor:pointer;
+  }
+</style>
+
+<div class="wrap">
+  <div class="card">
+    <h2>
+      {% if document %}
+        ✏️ Edit Document
+      {% else %}
+        ⬆️ Upload Document
+      {% endif %}
+    </h2>
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="form-row">
+        <label>Title</label>
+        {{ form.title }}
+      </div>
+
+      <div class="form-row">
+        <label>Description</label>
+        {{ form.description }}
+      </div>
+
+      <div class="form-row">
+        <label>Department</label>
+        {{ form.department }}
+      </div>
+
+      <div class="form-row">
+        <label>PDF File</label>
+        {{ form.pdf_file }}
+      </div>
+
+      <div class="form-row">
+        <label>Status</label>
+        {{ form.status }}
+      </div>
+
+      <div class="form-row">
+        <label>Disabled Reason</label>
+        {{ form.disabled_reason }}
+      </div>
+
+      <br>
+      <button type="submit" class="btn">
+        💾 Save
+      </button>
+    </form>
+  </div>
+</div>
+
+{% include "qms-templates/footer.html" %}

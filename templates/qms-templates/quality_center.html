@@ -20,7 +20,7 @@
       --shadow-soft: 0 10px 24px rgba(0,0,0,.08);
 
       --r:18px;
-      --container:1200px;
+      --container:95%;
 
       --ok:#1F9D55;
       --warn:#F5A524;
@@ -61,13 +61,13 @@
       z-index:0;
     }
 
-    .page{
-      max-width: var(--container);
-      margin: 18px auto 0;
-      padding: 0 18px 26px;
-      position:relative;
-      z-index:1;
-    }
+   .page{
+  width:100%;
+  margin:18px 0 0;
+  padding:0 30px 30px;
+  position:relative;
+  z-index:1;
+}
 
     .grid{
       display:grid;
@@ -124,32 +124,95 @@
     .tag.info{ background: rgba(37,99,235,.10); border-color: rgba(37,99,235,.25); color: var(--info); }
     .tag.warn{ background: rgba(245,165,36,.12); border-color: rgba(245,165,36,.22); color: var(--warn); }
 
-    .kpis{
-      display:grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap:12px;
-      margin-top: 14px;
-    }
+/* ===============================
+   ENTERPRISE KPI GRID
+=================================*/
+.kpis{
+  display:grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap:16px;
+  margin-top:18px;
+}
 
-    .kpi{
-      border:1px solid rgba(11,18,32,.10);
-      border-radius: 16px;
-      padding: 14px;
-      background: #fff;
-      box-shadow: 0 8px 18px rgba(0,0,0,.05);
-    }
+/* ===============================
+   ENTERPRISE KPI CARD
+=================================*/
+.kpi{
+  position:relative;
+  background:#fff;
+  border-radius:10px;
+  padding:16px 18px 18px;
 
-    .kpi .label{
-      font-size:12.6px;
-      color: var(--muted);
-      font-weight:700;
-    }
+  border:1px solid rgba(0,0,0,.06);
+  box-shadow:0 6px 14px rgba(0,0,0,.05);
 
-    .kpi .val{
-      margin-top: 10px;
-      font-size:24px;
-      font-weight:900;
-    }
+  min-height:160px;
+
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+
+  transition:.18s ease;
+  background: linear-gradient(180deg, #ffffff, #fafafa);
+}
+
+/* Hover احترافي جداً */
+.kpi:hover{
+  transform: translateY(-4px);
+  box-shadow:0 14px 30px rgba(0,0,0,.10);
+}
+
+/* الخط الملون على اليسار (Enterprise Style) */
+.kpi::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:12px;
+  bottom:12px;
+  width:5px;
+  border-radius:6px;
+}
+
+/* ألوان لكل بطاقة */
+.kpis .kpi:nth-child(1)::before{ background:#006EB3; } /* Documents */
+.kpis .kpi:nth-child(2)::before{ background:#1F9D55; } /* Active */
+.kpis .kpi:nth-child(3)::before{ background:#9CA3AF; } /* Archived */
+.kpis .kpi:nth-child(4)::before{ background:#8B5CF6; } /* Departments */
+.kpis .kpi:nth-child(5)::before{ background:#0EA5E9; } /* Users */
+.kpis .kpi:nth-child(6)::before{ background:#F59E0B; } /* Activity */
+
+/* العنوان فوق */
+.kpi .label{
+  font-size:12px;
+  color:var(--muted);
+  font-weight:700;
+  letter-spacing:.4px;
+  padding-left:6px;
+}
+
+/* الرقم في المنتصف */
+.kpi .val{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:32px;
+  font-weight:900;
+  color:var(--text);
+}
+
+/* خلفية ضوء ناعم داخل البطاقة */
+.kpi::after{
+  content:"";
+  position:absolute;
+  right:-20px;
+  bottom:-20px;
+  width:120px;
+  height:120px;
+  background: radial-gradient(circle, rgba(0,110,179,.08), transparent 70%);
+  pointer-events:none;
+}
 
     .panel{
       margin-top: 14px;

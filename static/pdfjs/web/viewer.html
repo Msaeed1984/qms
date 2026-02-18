@@ -22,6 +22,7 @@ See https://github.com/adobe-type-tools/cmap-resources
 -->
 <html dir="ltr" mozdisallowselectionprint>
   <head>
+
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="google" content="notranslate" />
@@ -32,6 +33,66 @@ See https://github.com/adobe-type-tools/cmap-resources
 <script src="../build/pdf.mjs" type="module"></script>
 
     <link rel="stylesheet" href="viewer.css" />
+
+    <style>
+
+/* =========================
+   إخفاء الطباعة والتحميل
+========================= */
+#printButton,
+#secondaryPrint,
+#downloadButton,
+#secondaryDownload,
+#openFile,
+#secondaryOpenFile {
+    display: none !important;
+}
+
+/* =========================
+   إخفاء قائمة Tools بالكامل
+========================= */
+#secondaryToolbarToggle,
+#secondaryToolbar {
+    display: none !important;
+}
+
+/* =========================
+   إخفاء Sidebar بالكامل
+========================= */
+#toolbarSidebar,
+#sidebarContainer,
+#viewsManagerToggleButton {
+    display: none !important;
+}
+
+/* =========================
+   إخفاء أدوات التعديل
+========================= */
+#editorModeButtons,
+#editorModeSeparator {
+    display: none !important;
+}
+
+/* =========================
+   إخفاء Presentation / Rotate / Bookmark
+========================= */
+#presentationMode,
+#viewBookmark,
+#firstPage,
+#lastPage,
+#pageRotateCw,
+#pageRotateCcw {
+    display: none !important;
+}
+
+/* =========================
+   إبقاء:
+   ✔ Zoom
+   ✔ Search
+   ✔ Page navigation
+========================= */
+
+</style>
 <style>
 
 /* إخفاء أزرار الطباعة والتحميل */
