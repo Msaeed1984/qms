@@ -1,0 +1,312 @@
+{# qms-templates/home.html #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>QMS • Document Management</title>
+
+  <style>
+    :root{
+      --em-blue:#006EB3;
+      --em-green:#5BC500;
+
+      --bg:#ffffff;
+      --text:#0B1220;
+      --muted: rgba(11,18,32,.62);
+      --line: rgba(11,18,32,.12);
+
+      --shadow: 0 14px 34px rgba(0,0,0,.10);
+      --shadow-soft: 0 10px 24px rgba(0,0,0,.08);
+
+      --r:18px;
+      --container:1200px;
+
+      --ok:#1F9D55;
+      --warn:#F5A524;
+      --bad:#E11D48;
+      --info:#2563EB;
+
+      --chip-bg: rgba(11,18,32,.04);
+      --chip-bd: rgba(11,18,32,.10);
+
+      --grad-blue: linear-gradient(90deg, #006EB3, #0A84D6);
+    }
+
+    *{ box-sizing:border-box; }
+    html, body{ height:100%; margin:0; }
+
+    body{
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    /* Sticky footer layout */
+    .page-wrap{
+      min-height: 100vh;
+      display:flex;
+      flex-direction:column;
+    }
+    .main{
+      flex:1;
+    }
+
+    .page{
+      max-width: var(--container);
+      margin: 18px auto 0;
+      padding: 0 18px 26px;
+    }
+
+    .bg-soft{
+      position: fixed;
+      inset: 0;
+      pointer-events:none;
+      opacity: .6;
+      background:
+        radial-gradient(900px 380px at 20% 0%, rgba(0,110,179,.10), transparent 55%),
+        radial-gradient(800px 360px at 85% 10%, rgba(91,197,0,.10), transparent 60%),
+        linear-gradient(to bottom, rgba(0,0,0,.02), transparent 280px);
+      z-index:0;
+    }
+
+    .page > *{ position:relative; z-index:1; }
+
+    .card{
+      background:#fff;
+      border:1px solid rgba(11,18,32,.10);
+      border-radius: var(--r);
+      box-shadow: var(--shadow-soft);
+      padding: 18px;
+      transition: .22s ease;
+    }
+    .card:hover{
+      transform: translateY(-3px);
+      box-shadow: var(--shadow);
+    }
+
+    .hero{
+      display:grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap:14px;
+      align-items:stretch;
+      margin-top: 16px;
+    }
+
+    .headline{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .hero-title{
+      margin:0;
+      font-size:22px;
+      letter-spacing:.2px;
+      font-weight:800;
+    }
+    .hero-sub{
+      margin:8px 0 0;
+      color: var(--muted);
+      font-size:13.7px;
+      line-height:1.5;
+    }
+
+    .tag{
+      font-size:12px;
+      font-weight:800;
+      padding: 7px 11px;
+      border-radius: 999px;
+      border:1px solid var(--chip-bd);
+      background: var(--chip-bg);
+      white-space:nowrap;
+    }
+    .tag.ok{ background: rgba(31,157,85,.10); border-color: rgba(31,157,85,.25); color: var(--ok); }
+    .tag.info{ background: rgba(37,99,235,.10); border-color: rgba(37,99,235,.25); color: var(--info); }
+
+    .cta{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 14px;
+    }
+
+    .btn{
+      border:0;
+      cursor:pointer;
+      border-radius: 14px;
+      padding: 10px 14px;
+      font-weight:800;
+      font-size:13.5px;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .btn.primary{
+      background: var(--grad-blue);
+      color:#fff;
+    }
+
+    .btn.ghost{
+      background: rgba(0,110,179,.07);
+      color: var(--em-blue);
+      border:1px solid rgba(0,110,179,.18);
+    }
+
+    .kpis{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:12px;
+      margin-top: 14px;
+    }
+
+    .kpi{
+      border:1px solid rgba(11,18,32,.10);
+      border-radius: 16px;
+      padding: 14px;
+      background: #fff;
+      box-shadow: 0 8px 18px rgba(0,0,0,.05);
+    }
+
+    .kpi .label{
+      font-size:12.6px;
+      color: var(--muted);
+      font-weight:700;
+    }
+    .kpi .val{
+      margin-top: 10px;
+      font-size:24px;
+      font-weight:900;
+    }
+
+    .panel{
+      margin-top: 14px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:14px;
+    }
+
+    .section-title{
+      margin:0;
+      font-size:15px;
+      font-weight:600;
+    }
+    .section-sub{
+      margin:6px 0 0;
+      color: var(--muted);
+      font-size:13.2px;
+      line-height:1.45;
+    }
+
+    .table{
+      width:100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-top: 12px;
+      border-radius: 14px;
+      border:1px solid rgba(11,18,32,.10);
+      background:#fff;
+    }
+    .table th, .table td{
+      padding: 11px 12px;
+      border-bottom:1px solid rgba(11,18,32,.10);
+      text-align:left;
+      font-size:13px;
+    }
+    .table th{
+      background: rgba(11,18,32,.03);
+      font-weight:900;
+      font-size:11.8px;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 980px){
+      .hero{ grid-template-columns: 1fr; }
+      .panel{ grid-template-columns: 1fr; }
+      .kpis{ grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-soft"></div>
+
+  <div class="page-wrap">
+    {% include "qms-templates/header.html" %}
+
+    <main class="main">
+      <div class="page">
+
+        <!-- Intro -->
+        <section class="hero">
+
+          <div class="card">
+            <div class="headline">
+              <div>
+                <h1 class="hero-title">Digital Document Management (Paperless)</h1>
+                <p class="hero-sub">
+                  Secure centralized platform for managing quality documents with full access control.
+                </p>
+              </div>
+              <span class="tag info">Secure View</span>
+            </div>
+
+            <div class="cta">
+              <a class="btn primary" href="{% url 'documents:list' %}">
+                📄 Browse Documents
+              </a>
+              <a class="btn ghost" href="#">
+                🔔 Notifications
+              </a>
+            </div>
+
+            <div class="kpis">
+              <div class="kpi">
+                <div class="label">System Status</div>
+                <div class="val">Online</div>
+              </div>
+              <div class="kpi">
+                <div class="label">Access Control</div>
+                <div class="val">Active</div>
+              </div>
+              <div class="kpi">
+                <div class="label">Security Level</div>
+                <div class="val">High</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2 class="section-title">Access Policy</h2>
+            <p class="section-sub">
+              Viewing only • No download • No printing • Full audit tracking.
+            </p>
+          </div>
+
+        </section>
+
+      </div>
+    </main>
+
+    {% include "qms-templates/footer.html" %}
+  </div>
+
+  <!-- 🔴 مهم جداً -->
+  <!-- تحويل Employee و Manager تلقائياً -->
+  <script>
+    {% if request.user.is_authenticated %}
+      {% if request.user.groups.all %}
+        {% for g in request.user.groups.all %}
+          {% if g.name == "Employees" or g.name == "Managers" %}
+            window.location.href = "{% url 'documents:list' %}";
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    {% endif %}
+  </script>
+
+</body>
+</html>

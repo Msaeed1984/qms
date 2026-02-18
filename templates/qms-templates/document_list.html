@@ -1,0 +1,267 @@
+{% include "qms-templates/header.html" %}
+
+<style>
+  html, body{ height:100%; margin:0; }
+  body{ display:flex; flex-direction:column; }
+  .main-content{ flex:1; }
+
+  :root{
+    --container:1200px;
+    --r:18px;
+    --line: rgba(11,18,32,.10);
+    --shadow: 0 14px 30px rgba(0,0,0,.08);
+    --muted: rgba(11,18,32,.62);
+    --ok:#1F9D55;
+    --warn:#F5A524;
+    --bad:#E11D48;
+    --em-blue:#006EB3;
+  }
+
+  .page{
+    max-width:var(--container);
+    margin:18px auto 0;
+    padding:0 18px 26px;
+  }
+
+  .topbar{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+    margin: 16px 0;
+  }
+
+  .title{
+    margin:0;
+    font-size:22px;
+    font-weight:900;
+    letter-spacing:.2px;
+  }
+  .sub{
+    margin:6px 0 0;
+    color:var(--muted);
+    font-size:13.5px;
+  }
+
+  .filters{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+
+  .search{
+    position:relative;
+    width:320px;
+    max-width: 85vw;
+  }
+  .search input{
+    width:100%;
+    height:42px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    background:#fff;
+    padding: 0 14px 0 40px;
+    outline:none;
+    font-size:13.5px;
+    box-shadow: 0 10px 22px rgba(0,0,0,.05);
+  }
+  .search .icon{
+    position:absolute;
+    left:14px; top:50%;
+    transform:translateY(-50%);
+    color: rgba(11,18,32,.55);
+    font-size:16px;
+  }
+
+  .chip{
+    height:42px;
+    padding:0 14px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    background:#fff;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-weight:800;
+    font-size:12.5px;
+    box-shadow: 0 10px 22px rgba(0,0,0,.05);
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap:14px;
+  }
+
+  .card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius: var(--r);
+    box-shadow: var(--shadow);
+    padding:16px;
+    transition:.18s ease;
+  }
+  .card:hover{
+    transform: translateY(-3px);
+    box-shadow: 0 18px 36px rgba(0,0,0,.10);
+  }
+
+  .card .row{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    align-items:flex-start;
+  }
+
+  .doc-title{
+    margin:0;
+    font-size:15px;
+    font-weight:900;
+    line-height:1.25;
+  }
+  .meta{
+    margin:8px 0 0;
+    color: var(--muted);
+    font-size:12.8px;
+    line-height:1.35;
+  }
+
+  .badge{
+    padding:6px 10px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:900;
+    border:1px solid var(--line);
+    white-space:nowrap;
+  }
+  .active{ background: rgba(31,157,85,.10); border-color: rgba(31,157,85,.22); color: var(--ok); }
+  .disabled{ background: rgba(245,165,36,.12); border-color: rgba(245,165,36,.22); color: var(--warn); }
+  .archived{ background: rgba(225,29,72,.10); border-color: rgba(225,29,72,.18); color: var(--bad); }
+
+  .actions{
+    margin-top:12px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    text-decoration:none;
+    font-weight:900;
+    font-size:12.8px;
+    padding:10px 12px;
+    border-radius:12px;
+    border:1px solid var(--line);
+    background:#fff;
+    color:#0B1220;
+    transition:.15s ease;
+  }
+  .btn:hover{ transform: translateY(-1px); background: rgba(0,110,179,.05); border-color: rgba(0,110,179,.18); }
+  .btn.primary{
+    background: rgba(0,110,179,.10);
+    border-color: rgba(0,110,179,.18);
+    color: var(--em-blue);
+  }
+
+  .btn.danger{
+    background: rgba(225,29,72,.08);
+    border-color: rgba(225,29,72,.18);
+    color: var(--bad);
+  }
+
+  .empty{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius: var(--r);
+    box-shadow: var(--shadow);
+    padding:18px;
+    color: var(--muted);
+    text-align:center;
+  }
+
+  @media (max-width: 980px){
+    .grid{ grid-template-columns: 1fr; }
+  }
+</style>
+
+<div class="main-content">
+  <div class="page">
+
+    <div class="topbar">
+      <div>
+        <h1 class="title">Documents</h1>
+        <p class="sub">Showing documents based on your access level.</p>
+      </div>
+
+      <div class="filters">
+        <div class="search">
+          <span class="icon"><i class="bi bi-search"></i></span>
+          <input id="docSearch" type="search" placeholder="Search by title..." />
+        </div>
+        <div class="chip"><i class="bi bi-files"></i> Total: {{ total_docs }}</div>
+      </div>
+    </div>
+
+    {% if documents %}
+      <div class="grid" id="docGrid">
+        {% for doc in documents %}
+          <div class="card doc-item" data-title="{{ doc.title|lower }}">
+            <div class="row">
+              <div>
+                <h3 class="doc-title">{{ doc.title }}</h3>
+                <div class="meta">
+                  <div><b>Department:</b> {{ doc.department.name }}</div>
+                  <div><b>Updated:</b> {{ doc.updated_at|date:"Y-m-d" }}</div>
+                </div>
+              </div>
+              <span class="badge {{ doc.status }}">{{ doc.get_status_display }}</span>
+            </div>
+
+            <div class="actions">
+              <a class="btn primary" href="{% url 'documents:view' doc.id %}" target="_blank">
+                <i class="bi bi-eye"></i> View PDF
+              </a>
+
+              {% if can_manage %}
+                <a class="btn" href="{% url 'documents:edit' doc.id %}">
+                  <i class="bi bi-pencil"></i> Edit
+                </a>
+
+                <a class="btn danger"
+                   href="{% url 'documents:delete' doc.id %}"
+                   onclick="return confirm('Are you sure you want to archive this document?');">
+                  <i class="bi bi-trash"></i> Delete
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty">No documents available.</div>
+    {% endif %}
+
+  </div>
+</div>
+
+{% include "qms-templates/footer.html" %}
+
+<script>
+  (function(){
+    const input = document.getElementById("docSearch");
+    const items = document.querySelectorAll(".doc-item");
+    if(!input || !items.length) return;
+
+    input.addEventListener("input", function(){
+      const q = (input.value || "").toLowerCase().trim();
+      items.forEach(el=>{
+        const t = el.getAttribute("data-title") || "";
+        el.style.display = t.includes(q) ? "" : "none";
+      });
+    });
+  })();
+</script>

@@ -1,0 +1,98 @@
+{# qms-templates/footer.html #}
+<footer class="qms-footer" role="contentinfo">
+  <style>
+    :root{
+      --em-blue:#006EB3;
+      --em-green:#5BC500;
+      --body:#ffffff;
+      --text:#0B1220;
+      --muted: rgba(11,18,32,.62);
+      --shadow: 0 16px 36px rgba(0,0,0,.10);
+      --r:16px;
+      --container:1200px;
+    }
+
+    .qms-footer{
+      background: var(--em-green);
+      color:#06220a;
+      margin-top: 28px;
+      box-shadow: 0 -10px 26px rgba(0,0,0,.10);
+    }
+
+    .qms-footer .wrap{
+      max-width: var(--container);
+      margin:0 auto;
+      padding: 16px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .qms-footer .left{
+      display:flex;
+      flex-direction:column;
+      line-height:1.15;
+    }
+    .qms-footer .left .t{
+      font-weight:500;
+      letter-spacing:.2px;
+      color:#ffffff;
+    }
+    .qms-footer .left .s{
+      font-size:9px;
+      font-weight:300;
+      opacity:.95;
+    }
+
+    .qms-footer .right{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .pill{
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.55);
+      color:#504949;
+      font-weight:700;
+      font-size:9px;
+      border:1px solid rgba(4,49,11,.12);
+    }
+
+    .link{
+      color:#251f1f;
+      text-decoration:none;
+      font-weight:500;
+      font-size:9px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.45);
+      border:1px solid rgba(4,49,11,.10);
+      transition:.15s ease;
+    }
+    .link:hover{ transform: translateY(-1px); background: rgba(255,255,255,.62); }
+
+    @media (max-width: 640px){
+      .qms-footer .wrap{ justify-content:center; text-align:center; }
+      .qms-footer .right{ justify-content:center; }
+    }
+  </style>
+
+  <div class="wrap">
+    <div class="left">
+      <div class="t">EMSTEEL • Quality Document Management</div>
+      <div class="s">Paperless access • Controlled viewing • Audit & traceability</div>
+    </div>
+
+    <div class="right">
+      <span class="pill">Version 1.0</span>
+      <a class="link" href="#">Support</a>
+      <a class="link" href="#">Policy</a>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,38 @@
+{% include "qms-templates/header.html" %}
+
+<style>
+  .viewer-wrap{
+    max-width:1200px;
+    margin:18px auto 0;
+    padding:0 18px 26px;
+  }
+  .viewer-card{
+    background:#fff;
+    border:1px solid rgba(11,18,32,.10);
+    border-radius:18px;
+    box-shadow:0 14px 30px rgba(0,0,0,.08);
+    padding:14px;
+  }
+  .viewer-title{
+    font-weight:900;
+    margin:0 0 12px;
+  }
+  iframe{
+    width:100%;
+    height:80vh;
+    border:0;
+    border-radius:14px;
+    background:#f6f8fb;
+  }
+</style>
+
+<div class="viewer-wrap">
+  <div class="viewer-card">
+    <div class="viewer-title">📄 {{ document.title }}</div>
+
+    <iframe src="{{ pdf_absolute_url }}"></iframe>
+
+  </div>
+</div>
+
+{% include "qms-templates/footer.html" %}

@@ -1,0 +1,299 @@
+{# qms-templates/quality_center.html #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>QMS • Quality Control Center</title>
+
+  <style>
+    :root{
+      --em-blue:#006EB3;
+      --em-green:#5BC500;
+
+      --bg:#ffffff;
+      --text:#0B1220;
+      --muted: rgba(11,18,32,.62);
+      --line: rgba(11,18,32,.10);
+
+      --shadow: 0 14px 34px rgba(0,0,0,.10);
+      --shadow-soft: 0 10px 24px rgba(0,0,0,.08);
+
+      --r:18px;
+      --container:1200px;
+
+      --ok:#1F9D55;
+      --warn:#F5A524;
+      --bad:#E11D48;
+      --info:#2563EB;
+
+      --chip-bg: rgba(11,18,32,.04);
+      --chip-bd: rgba(11,18,32,.10);
+
+      --grad-blue: linear-gradient(90deg, #006EB3, #0A84D6);
+    }
+
+    *{ box-sizing:border-box; }
+    html, body{ height:100%; margin:0; }
+
+    body{
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .page-wrap{
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+    }
+    .main{ flex:1; }
+
+    .bg-soft{
+      position: fixed;
+      inset: 0;
+      pointer-events:none;
+      opacity: .6;
+      background:
+        radial-gradient(900px 380px at 20% 0%, rgba(0,110,179,.10), transparent 55%),
+        radial-gradient(800px 360px at 85% 10%, rgba(91,197,0,.10), transparent 60%),
+        linear-gradient(to bottom, rgba(0,0,0,.02), transparent 280px);
+      z-index:0;
+    }
+
+    .page{
+      max-width: var(--container);
+      margin: 18px auto 0;
+      padding: 0 18px 26px;
+      position:relative;
+      z-index:1;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.3fr .7fr;
+      gap:14px;
+      align-items:stretch;
+      margin-top: 14px;
+    }
+
+    .card{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius: var(--r);
+      box-shadow: var(--shadow-soft);
+      padding: 18px;
+      transition:.22s ease;
+    }
+    .card:hover{
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .headline{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    h1{
+      margin:0;
+      font-size:20px;
+      font-weight:900;
+      letter-spacing:.2px;
+    }
+
+    p{
+      margin:8px 0 0;
+      color: var(--muted);
+      font-size:13.5px;
+      line-height:1.5;
+    }
+
+    .tag{
+      font-size:12px;
+      font-weight:800;
+      padding: 7px 11px;
+      border-radius: 999px;
+      border:1px solid var(--chip-bd);
+      background: var(--chip-bg);
+      white-space:nowrap;
+    }
+    .tag.ok{ background: rgba(31,157,85,.10); border-color: rgba(31,157,85,.25); color: var(--ok); }
+    .tag.info{ background: rgba(37,99,235,.10); border-color: rgba(37,99,235,.25); color: var(--info); }
+    .tag.warn{ background: rgba(245,165,36,.12); border-color: rgba(245,165,36,.22); color: var(--warn); }
+
+    .kpis{
+      display:grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap:12px;
+      margin-top: 14px;
+    }
+
+    .kpi{
+      border:1px solid rgba(11,18,32,.10);
+      border-radius: 16px;
+      padding: 14px;
+      background: #fff;
+      box-shadow: 0 8px 18px rgba(0,0,0,.05);
+    }
+
+    .kpi .label{
+      font-size:12.6px;
+      color: var(--muted);
+      font-weight:700;
+    }
+
+    .kpi .val{
+      margin-top: 10px;
+      font-size:24px;
+      font-weight:900;
+    }
+
+    .panel{
+      margin-top: 14px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:14px;
+    }
+
+    .section-title{
+      margin:0;
+      font-size:15px;
+      font-weight:800;
+    }
+
+    .table{
+      width:100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-top: 12px;
+      border-radius: 14px;
+      border:1px solid rgba(11,18,32,.10);
+      background:#fff;
+    }
+
+    .table th, .table td{
+      padding: 11px 12px;
+      border-bottom:1px solid rgba(11,18,32,.10);
+      font-size:13px;
+    }
+
+    .table th{
+      background: rgba(11,18,32,.03);
+      font-weight:900;
+      font-size:11.8px;
+    }
+
+    .mini{
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size:12px;
+      font-weight:800;
+      border:1px solid rgba(11,18,32,.10);
+      background: rgba(11,18,32,.04);
+    }
+
+    @media (max-width:1100px){
+      .kpis{ grid-template-columns: repeat(2,1fr); }
+      .grid{ grid-template-columns:1fr; }
+      .panel{ grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-soft"></div>
+
+  <div class="page-wrap">
+    {% include "qms-templates/header.html" %}
+
+    <main class="main">
+      <div class="page">
+
+        <div class="card">
+          <div class="headline">
+            <div>
+              <h1>Quality Control Center</h1>
+              <p>Central dashboard for monitoring documents, users and compliance activity.</p>
+            </div>
+            <span class="tag info">Restricted</span>
+          </div>
+
+          <div class="kpis">
+            <div class="kpi"><div class="label">Documents</div><div class="val">{{ kpi_total_docs }}</div></div>
+            <div class="kpi"><div class="label">Active</div><div class="val">{{ kpi_active_docs }}</div></div>
+            <div class="kpi"><div class="label">Archived</div><div class="val">{{ kpi_archived_docs }}</div></div>
+            <div class="kpi"><div class="label">Departments</div><div class="val">{{ kpi_departments }}</div></div>
+            <div class="kpi"><div class="label">Users</div><div class="val">{{ kpi_users }}</div></div>
+            <div class="kpi"><div class="label">Activity Logs</div><div class="val">{{ kpi_activities }}</div></div>
+          </div>
+        </div>
+
+        <section class="panel">
+
+          <!-- Recent Documents -->
+          <div class="card">
+            <h2 class="section-title">Recent Documents</h2>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Document</th>
+                  <th>Department</th>
+                  <th>Status</th>
+                  <th>Updated</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for d in recent_docs %}
+                <tr>
+                  <td><b>{{ d.title }}</b></td>
+                  <td>{{ d.department.name }}</td>
+                  <td><span class="mini">{{ d.get_status_display }}</span></td>
+                  <td>{{ d.updated_at|date:"Y-m-d" }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4">No data</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Activity Log -->
+          <div class="card">
+            <h2 class="section-title">Recent Activity</h2>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Action</th>
+                  <th>Document</th>
+                  <th>Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for a in recent_activities %}
+                <tr>
+                  <td><b>{{ a.user }}</b></td>
+                  <td>{{ a.get_action_display }}</td>
+                  <td>{{ a.document.title }}</td>
+                  <td>{{ a.timestamp|date:"Y-m-d H:i" }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4">No activity yet</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+        </section>
+
+      </div>
+    </main>
+
+    {% include "qms-templates/footer.html" %}
+  </div>
+
+</body>
+</html>
