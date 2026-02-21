@@ -1,4 +1,5 @@
 {# qms-templates/header.html #}
+{% load static %}
 <header class="qms-header" role="banner">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
@@ -6,17 +7,30 @@
     :root{
       --em-blue:#006EB3;
       --em-green:#5BC500;
+
       --text:#ffffff;
       --muted: rgba(255,255,255,.86);
       --line: rgba(255,255,255,.18);
       --shadow: 0 10px 28px rgba(0,0,0,.18);
+
       --h:72px;
-      --container:1200px;
+      --radius:12px;
+    }
+
+    /* ===== FIX FULL WIDTH ===== */
+    html, body{
+      margin:0;
+      padding:0;
+    }
+
+    body{
+      overflow-x:hidden;
     }
 
     *{ box-sizing:border-box; }
 
     .qms-header{
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
       height:var(--h);
       background:linear-gradient(90deg,#006EB3,#0A84D6);
       color:var(--text);
@@ -24,164 +38,167 @@
       position:sticky;
       top:0;
       z-index:100;
+      width:100%;
+      left:0;
+      right:0;
     }
 
     .qms-header .wrap{
-      max-width:var(--container);
+      width:100%;
       height:100%;
-      margin:0 auto;
-      padding:0 18px;
+      margin:0;
+      padding:0 22px;
       display:grid;
       grid-template-columns:auto 1fr auto;
       align-items:center;
-      gap:18px;
     }
 
     /* ================= Brand ================= */
     .brand{
       display:flex;
       align-items:center;
-      gap:12px;
-      white-space:nowrap;
+      gap:14px;
+      justify-self:start;
+      text-decoration:none;
+      color:inherit;
     }
 
     .brand .logo{
-      width:40px;
-      height:40px;
-      border-radius:12px;
-      background:rgba(255,255,255,.18);
-      display:grid;
-      place-items:center;
-      font-weight:900;
-      font-size:18px;
-      box-shadow:inset 0 0 0 1px rgba(255,255,255,.28);
+      width:44px;
+      height:44px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:transparent;
+      box-shadow:none;
+      padding:0;
+      flex:0 0 auto;
+    }
+
+    .brand .logo img{
+      height:38px;
+      width:auto;
+      object-fit:contain;
+      display:block;
     }
 
     .brand .txt{
       display:flex;
       flex-direction:column;
       line-height:1.1;
+      min-width:0;
     }
 
     .brand .title{
       font-size:15px;
-      font-weight:800;
+      font-weight:500;
       color:#fff;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      max-width:360px;
     }
 
     .brand .sub{
       font-size:12px;
       opacity:.9;
       color:rgba(255,255,255,.88);
-    }
-
-    /* ================= Nav ================= */
-    .nav{
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      gap:14px;
-    }
-
-    .nav a{
-      position:relative;
-      width:40px;
-      height:40px;
-      display:grid;
-      place-items:center;
-      color:#fff;
-      border-radius:12px;
-      background:rgba(255,255,255,.14);
-      border:1px solid var(--line);
-      text-decoration:none;
-      font-size:18px;
-      transition:.15s ease;
-    }
-
-    .nav a:hover{
-      background:rgba(255,255,255,.25);
-      transform:translateY(-2px);
-    }
-
-    .nav a.is-active{
-      background:rgba(255,255,255,.28);
-      box-shadow:0 10px 18px rgba(0,0,0,.12);
-      border-color: rgba(255,255,255,.30);
-    }
-
-    /* Tooltip */
-    .nav a::after{
-      content:attr(data-label);
-      position:absolute;
-      bottom:-34px;
-      left:50%;
-      transform:translateX(-50%);
-      background:#0B1220;
-      color:#fff;
-      font-size:11px;
-      padding:6px 9px;
-      border-radius:8px;
+      overflow:hidden;
+      text-overflow:ellipsis;
       white-space:nowrap;
-      opacity:0;
-      pointer-events:none;
-      transition:.15s;
+      max-width:360px;
     }
 
-    .nav a:hover::after{
-      opacity:1;
-      bottom:-38px;
-    }
+    .nav{ display:none; }
 
-    /* Add Button (Enterprise) */
-    .nav .add-btn{
-      background:var(--em-green);
-      border:1px solid rgba(255,255,255,.4);
-      font-weight:900;
-    }
-
-    .nav .add-btn:hover{
-      background:#6edb00;
-    }
-
-    /* ================= Right Section ================= */
     .right{
       display:flex;
       align-items:center;
-      gap:12px;
+      justify-content:flex-end;
+      gap:10px;
+      min-width:320px;
     }
 
-    /* Search */
-    .search{
-      position:relative;
-      width:240px;
-    }
-
-    .search input{
-      width:100%;
-      height:38px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.18);
+    .burger-btn{
+      width:42px;
+      height:42px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.25);
+      background:rgba(255,255,255,.15);
       color:#fff;
-      padding:0 14px 0 36px;
-      font-size:13px;
+      font-size:18px;
+      display:grid;
+      place-items:center;
+      cursor:pointer;
+      transition:.18s ease;
+    }
+
+    .burger-btn:hover{
+      background:rgba(255,255,255,.28);
+      transform:translateY(-1px);
+    }
+
+    .burger-btn:active{ transform:translateY(0); }
+
+    .burger-btn:focus-visible{
       outline:none;
+      box-shadow:0 0 0 3px rgba(255,255,255,.28);
     }
 
-    .search input::placeholder{
-      color:rgba(255,255,255,.85);
-    }
-
-    .search .icon{
+    .burger-menu{
       position:absolute;
-      left:12px;
-      top:50%;
-      transform:translateY(-50%);
-      font-size:14px;
+      top:72px;
+      right:22px;
+      width:240px;
+      background:#ffffff;
+      border-radius:16px;
+      box-shadow:0 20px 40px rgba(0,0,0,.18);
+      padding:10px;
+      display:none;
+      flex-direction:column;
+      gap:6px;
+      z-index:200;
+      animation:fadeIn .2s ease;
+      border:1px solid #eef3f8;
     }
 
-    /* User Box */
+    .burger-menu a{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:10px 12px;
+      border-radius:5px;
+      text-decoration:none;
+      font-size:13px;
+      color:#0B1220;
+      transition:.15s ease;
+    }
+
+    .burger-menu a i{
+      font-size:16px;
+      color:#006EB3;
+    }
+
+    .burger-menu a:hover{ background:#f2f6fa; }
+
+    .burger-menu a.bm-admin{
+      border-top:1px solid #e8edf3;
+      margin-top:6px;
+      padding-top:12px;
+    }
+
+    @keyframes fadeIn{
+      from{opacity:0; transform:translateY(-6px);}
+      to{opacity:1; transform:translateY(0);}
+    }
+
     .user{
+      position:relative;
+      display:flex;
+      align-items:center;
+    }
+
+    .user-btn{
       display:flex;
       align-items:center;
       gap:10px;
@@ -190,35 +207,63 @@
       background:#ffffff;
       border:1px solid rgba(255,255,255,.35);
       box-shadow:0 10px 18px rgba(0,0,0,.10);
-      max-width:260px;
+      cursor:pointer;
+      transition:.18s ease;
+      color:#0B1220;
+    }
+
+    .user-btn.icon-only{
+      width:44px;
+      height:44px;
+      padding:0;
+      border-radius:999px;
+      background:rgba(255,255,255,.18);
+      backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.30);
+      box-shadow:0 10px 20px rgba(0,0,0,.18);
+      display:grid;
+      place-items:center;
+      transition:.18s ease;
+    }
+
+    .user-btn.icon-only .avatar{ margin:0; }
+
+    .user-btn:hover{
+      transform:translateY(-1px);
+      box-shadow:0 14px 24px rgba(0,0,0,.14);
+    }
+
+    .user-btn:focus-visible{
+      outline:none;
+      box-shadow:0 0 0 3px rgba(255,255,255,.28), 0 14px 24px rgba(0,0,0,.14);
     }
 
     .avatar{
-      width:32px;
-      height:32px;
+      width:36px;
+      height:36px;
       border-radius:999px;
-      background:rgba(0,110,179,.12);
-      color:#006EB3;
+      background:transparent;
+      color:#ffffff;
       display:grid;
       place-items:center;
-      font-weight:900;
-      font-size:14px;
+      font-size:16px;
     }
 
     .uinfo{
       display:flex;
       flex-direction:column;
       line-height:1.05;
-      overflow:hidden;
+      min-width:0;
     }
 
     .uinfo .name{
       font-size:13px;
-      font-weight:800;
-      color:#0B1220;
+      font-weight:600;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
+      max-width:140px;
     }
 
     .uinfo .dept{
@@ -227,13 +272,97 @@
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
+      max-width:140px;
     }
 
-    /* Logout */
+    .caret{ font-size:12px; opacity:.65; }
+
+    /* ===== Modern User Popup ===== */
+.user-popup{
+    position:absolute;
+    top:60px;
+    right:0;
+    width:280px;
+    padding:20px;
+    border-radius:20px;
+
+    /* Modern Glass Gradient */
+    background:linear-gradient(
+      145deg,
+      rgba(255,255,255,.85),
+      rgba(255,255,255,.65)
+    );
+
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+
+    border:1px solid rgba(255,255,255,.55);
+    box-shadow:
+      0 25px 60px rgba(0,0,0,.25),
+      0 8px 20px rgba(0,110,179,.15);
+
+    display:none;
+    z-index:600;
+    animation:fadeUser .18s ease;
+  }
+
+  .user-popup.is-open{ display:block; }
+
+    /* تحسين توزيع المعلومات */
+    .popup-row{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      margin-bottom:12px;
+    }
+
+    .popup-row:last-child{
+      margin-bottom:0;
+    }
+
+    .popup-label{
+      font-size:11px;
+      font-weight:600;
+      letter-spacing:.5px;
+      text-transform:uppercase;
+      color:#6b7c8f;
+    }
+
+    .popup-value{
+      font-size:14px;
+      font-weight:600;
+      color:#0B1220;
+      word-break:break-word;
+    }
+
+    .popup-value.email{
+      font-size:13px;
+      font-weight:500;
+      color:#006EB3;
+    }
+
+    .popup-divider{
+      height:1px;
+      background:linear-gradient(
+        to right,
+        transparent,
+        rgba(0,110,179,.25),
+        transparent
+      );
+      margin:14px 0;
+    }
+
+    .user-popup.is-open{ display:block; }
+
+    @keyframes fadeUser{
+      from{opacity:0; transform:translateY(-6px);}
+      to{opacity:1; transform:translateY(0);}
+    }
+
     .logout{
       width:40px;
-      height:38px;
-      border-radius:12px;
+      height:40px;
+      border-radius:var(--radius);
       border:1px solid rgba(255,255,255,.18);
       background:rgba(255,255,255,.14);
       color:#fff;
@@ -247,37 +376,12 @@
       background:rgba(255,255,255,.22);
       transform:translateY(-1px);
     }
-      /* Admin (superuser only) */
-    .admin-btn{
-      height:38px;
-      padding:0 12px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.18);
-      background:rgba(255,255,255,.14);
-      color:#fff;
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      text-decoration:none;
-      font-weight:800;
-      font-size:12px;
-      transition:.15s ease;
-    }
 
-    .admin-btn:hover{
-      background:rgba(255,255,255,.22);
-      transform:translateY(-1px);
-    }
-
-    @media (max-width:1024px){
-      .admin-btn{ display:none; } /* اختياري: اخفاء في الموبايل */
-    }
-    /* Responsive */
     .menu-btn{
       display:none;
       width:40px;
-      height:38px;
-      border-radius:12px;
+      height:40px;
+      border-radius:var(--radius);
       border:1px solid var(--line);
       background:rgba(255,255,255,.16);
       color:#fff;
@@ -285,99 +389,123 @@
       cursor:pointer;
     }
 
-    @media (max-width: 1024px){
-      .nav{ display:none; }
-      .search{ display:none; }
-      .menu-btn{ display:inline-grid; place-items:center; }
+    @media (max-width: 1200px){
+      .brand .title, .brand .sub{ max-width:280px; }
+      .right{ min-width:280px; }
     }
 
+    @media (max-width: 1024px){
+      .menu-btn{ display:inline-grid; place-items:center; }
+      .brand{ min-width:0; }
+      .right{ min-width:0; }
+    }
+
+    @media (max-width: 560px){
+      .uinfo{ display:none; }
+      .caret{ display:none; }
+    }
   </style>
+
+  <!-- بقية الـ HTML والـ Script كما هو بدون أي تغيير -->
 
   <div class="wrap">
 
     <!-- Brand -->
-    <a class="brand" href="{% url 'core:home' %}" style="text-decoration:none;color:inherit;">
-      <div class="logo">Q</div>
+    <a class="brand" href="{% url 'core:home' %}">
+      <div class="logo">
+        <img src="{% static 'images/header-logo.png' %}" alt="Header Logo">
+      </div>
       <div class="txt">
         <div class="title">Quality Document Management</div>
         <div class="sub">Digital • Paperless • Secure</div>
       </div>
     </a>
 
-    <!-- Navigation -->
-    <nav class="nav">
+    <!-- Navigation (hidden) -->
+    <nav class="nav" aria-hidden="true"></nav>
 
-  <!-- Home -->
-  <a href="{% url 'core:home' %}" data-label="Home"
-     class="{% if request.resolver_match.url_name == 'home' %}is-active{% endif %}">
-    <i class="bi bi-house"></i>
-  </a>
-
-  <!-- Documents -->
-  <a href="{% url 'documents:list' %}" data-label="Documents"
-     class="{% if request.resolver_match.app_name == 'documents' %}is-active{% endif %}">
-    <i class="bi bi-folder2-open"></i>
-  </a>
-
-  {% if can_add_document %}
-    <!-- ➕ Add Document (بنفس تنسيق الأيقونات) -->
-    <a href="{% url 'documents:create' %}" data-label="Add Document"
-       class="{% if request.resolver_match.url_name == 'create' %}is-active{% endif %}">
-      <i class="bi bi-plus-lg"></i>
-    </a>
-  {% endif %}
-
-  {% if request.user.is_authenticated %}
-    <a href="#" data-label="Notifications">
-      <i class="bi bi-bell"></i>
-    </a>
-
-    <a href="#" data-label="Help">
-      <i class="bi bi-question-circle"></i>
-    </a>
-  {% endif %}
-
-</nav>
     <!-- Right -->
     <div class="right">
 
-      <div class="search">
-        <span class="icon"><i class="bi bi-search"></i></span>
-        <input type="search" placeholder="Search documents..." />
-      </div>
+      <!-- Burger -->
+      <button class="burger-btn" id="burgerBtn" type="button" aria-label="Menu" aria-haspopup="true" aria-expanded="false">
+        <i class="bi bi-grid-3x3-gap"></i>
+      </button>
 
-      <div class="user">
-        <div class="avatar">
-          {% if request.user.is_authenticated %}
-            {{ request.user.username|first|upper }}
-          {% else %}
-            U
-          {% endif %}
-        </div>
-        <div class="uinfo">
-          <div class="name">
-            {% if request.user.is_authenticated %}
-              {{ request.user.username }}
-            {% else %}
-              User
-            {% endif %}
-          </div>
-          <div class="dept">
-            {% if request.user.is_authenticated and request.user.department %}
-              {{ request.user.department.name }}
-            {% else %}
-              Department
-            {% endif %}
-          </div>
-        </div>
-      </div>
-          {% if request.user.is_authenticated and request.user.is_superuser %}
-      <a class="admin-btn" href="/admin/" title="Admin Panel">
-        <i class="bi bi-gear"></i>
-        Admin
-      </a>
+      <div class="burger-menu" id="burgerMenu">
+        <a href="{% url 'core:home' %}">
+          <i class="bi bi-house"></i><span>Home</span>
+        </a>
+
+        <a href="{% url 'documents:list' %}">
+          <i class="bi bi-folder2-open"></i><span>Documents</span>
+        </a>
+
+        {% if can_add_document %}
+        <a href="{% url 'documents:create' %}">
+          <i class="bi bi-plus-lg"></i><span>Add Document</span>
+        </a>
         {% endif %}
 
+        {% if request.user.is_authenticated and can_add_document %}
+        <a href="{% url 'documents:audit_dashboard' %}">
+          <i class="bi bi-shield-check"></i>
+          <span>Audit Dashboard</span>
+        </a>
+        {% endif %}
+
+        {% if request.user.is_authenticated %}
+        <a href="#">
+          <i class="bi bi-bell"></i><span>Notifications</span>
+        </a>
+
+        <a href="#">
+          <i class="bi bi-question-circle"></i><span>Help</span>
+        </a>
+        {% endif %}
+
+        {% if request.user.is_authenticated and request.user.is_superuser %}
+        <a href="/admin/" class="bm-admin">
+          <i class="bi bi-gear"></i><span>Admin Panel</span>
+        </a>
+        {% endif %}
+      </div>
+
+      <!-- User (click) -->
+          <div class="user">
+      <button class="user-btn icon-only" id="userBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="User menu">
+        <span class="avatar"><i class="bi bi-person-fill"></i></span>
+      </button>
+
+    <div class="user-popup" id="userMenu">
+
+      <div class="popup-row">
+        <span class="popup-label">User:</span>
+        <span class="popup-value">{{ request.user.username }}</span>
+      </div>
+
+      <div class="popup-row">
+        <span class="popup-label">Role:</span>
+        <span class="popup-value">
+          {% if request.user.department %}
+            {{ request.user.department.name }}
+          {% else %}
+            Admin_Role
+          {% endif %}
+        </span>
+      </div>
+
+      <div class="popup-divider"></div>
+
+      <div class="popup-row">
+        <span class="popup-label">Email:</span>
+        <span class="popup-value email">{{ request.user.email }}</span>
+      </div>
+
+    </div>
+    </div>
+
+      <!-- Logout / Login -->
       {% if request.user.is_authenticated %}
         <form method="post" action="{% url 'core:logout' %}" style="margin:0;">
           {% csrf_token %}
@@ -391,9 +519,64 @@
         </a>
       {% endif %}
 
-      <button class="menu-btn">☰</button>
-
+      <button class="menu-btn" type="button" aria-label="Menu">☰</button>
     </div>
 
   </div>
+
+  <script>
+    // ===== Burger Menu =====
+    const burgerBtn = document.getElementById("burgerBtn");
+    const burgerMenu = document.getElementById("burgerMenu");
+
+    function closeBurger(){
+      burgerMenu.style.display = "none";
+      burgerBtn.setAttribute("aria-expanded","false");
+    }
+
+    burgerBtn.addEventListener("click", function(e){
+      e.stopPropagation();
+      const isOpen = burgerMenu.style.display === "flex";
+      if(isOpen){
+        closeBurger();
+      }else{
+        burgerMenu.style.display = "flex";
+        burgerBtn.setAttribute("aria-expanded","true");
+      }
+    });
+
+    // ===== User Popup =====
+    const userBtn = document.getElementById("userBtn");
+    const userMenu = document.getElementById("userMenu");
+
+    function closeUser(){
+      userMenu.classList.remove("is-open");
+      userBtn.setAttribute("aria-expanded","false");
+    }
+
+    userBtn.addEventListener("click", function(e){
+      e.stopPropagation();
+      const open = userMenu.classList.contains("is-open");
+      if(open){
+        closeUser();
+      }else{
+        userMenu.classList.add("is-open");
+        userBtn.setAttribute("aria-expanded","true");
+      }
+    });
+
+    // Close on outside click
+    document.addEventListener("click", function(){
+      closeBurger();
+      closeUser();
+    });
+
+    // Close on ESC
+    document.addEventListener("keydown", function(e){
+      if(e.key === "Escape"){
+        closeBurger();
+        closeUser();
+      }
+    });
+  </script>
 </header>

@@ -8,7 +8,9 @@
 <script src="https://unpkg.com/lucide@latest"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+<script>
+const KPI_URL = "{% url 'core:kpi_enterprise' %}";
+</script>
 <style>
 :root{
   --em-blue:#006EB3;
@@ -665,50 +667,57 @@ tbody tr:last-child td{
   .charts{grid-template-columns:1fr;}
   .tables{grid-template-columns:1fr;}
 }
-.range-bar{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  background:#fff;
-  padding:14px 20px;
-  border-radius:14px;
-  box-shadow:0 10px 25px rgba(0,0,0,.05);
-  margin-bottom:10px;
-  border:1px solid var(--line);
-}
 
-.range-label{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-weight:800;
-  font-size:14px;
-}
+.range-bar.modern-range{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:#fff;
+    padding:18px 22px;
+    border-radius:16px;
+    box-shadow:0 15px 35px rgba(0,0,0,.06);
+    margin-bottom:18px;
+    border:1px solid var(--line);
+  }
 
-.range-buttons{
-  display:flex;
-  gap:10px;
-}
+  .range-left{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:700;
+    font-size:14px;
+  }
 
-.range-buttons button{
-  padding:8px 14px;
-  border-radius:10px;
-  border:1px solid rgba(0,0,0,.12);
-  background:#f8fafc;
-  font-weight:700;
-  cursor:pointer;
-  transition:.2s ease;
-}
+  .range-segment{
+    display:flex;
+    gap:6px;
+    background:#f3f6fa;
+    padding:6px;
+    border-radius:999px;
+    border:1px solid #e7eef6;
+  }
 
-.range-buttons button:hover{
-  background:#e2e8f0;
-}
+  .range-segment button{
+    padding:8px 16px;
+    border-radius:999px;
+    border:0;
+    background:transparent;
+    font-weight:600;
+    font-size:13px;
+    cursor:pointer;
+    transition:.15s ease;
+  }
 
-.range-buttons button.active{
-  background:#006EB3;
-  color:#fff;
-  border-color:#006EB3;
-}
+  .range-segment button:hover{
+    background:rgba(0,110,179,.08);
+  }
+
+  .range-segment button.active{
+    background:#006EB3;
+    color:#fff;
+    box-shadow:0 8px 20px rgba(0,110,179,.25);
+  }
+
 .card-header-flex{
   display:flex;
   justify-content:space-between;
@@ -744,20 +753,22 @@ tbody tr:last-child td{
 
 <div class="page">
 
-<div class="range-bar">
-  <div class="range-label">
-    <i data-lucide="calendar"></i>
-    Time Range:
-  </div>
+  <div class="range-bar modern-range">
 
-  <div class="range-buttons">
-    <button data-range="1">Today</button>
-    <button data-range="7">7 Days</button>
-    <button data-range="30" class="active">30 Days</button>
-    <button data-range="90">90 Days</button>
-    <button data-range="365">Year</button>
+    <div class="range-left">
+      <i data-lucide="calendar"></i>
+      <span>Time Range</span>
+    </div>
+
+    <div class="range-segment" id="rangeSegment">
+      <button data-range="1">Today</button>
+      <button data-range="7">7d</button>
+      <button data-range="30">30d</button>
+      <button data-range="90">90d</button>
+      <button data-range="365">Year</button>
+    </div>
+
   </div>
-</div>
 
 <!-- KPI -->
 <div class="kpis">
@@ -1027,21 +1038,26 @@ const deptValues = JSON.parse(
   document.getElementById('dept-values-data').textContent
 );
 
+
 // Weekly Chart
-new Chart(document.getElementById('weeklyChart'),{
-  type:'line',
-  data:{
-    labels: weeklyLabels,
-    datasets:[{
-      label:'Activity',
-      data: weeklyValues,
-      borderColor:'#006EB3',
-      backgroundColor:'rgba(0,110,179,.1)',
-      fill:true,
-      tension:.4
-    }]
-  }
-});
+// Weekly Chart (Safe Init)
+const weeklyCanvas = document.getElementById('weeklyChart');
+if (weeklyCanvas) {
+  new Chart(weeklyCanvas,{
+    type:'line',
+    data:{
+      labels: weeklyLabels,
+      datasets:[{
+        label:'Activity',
+        data: weeklyValues,
+        borderColor:'#006EB3',
+        backgroundColor:'rgba(0,110,179,.1)',
+        fill:true,
+        tension:.4
+      }]
+    }
+  });
+}
 
 // Action Chart
 /* ==========================
@@ -1160,22 +1176,41 @@ function loadEnterpriseKPI(rangeValue){
     .then(res => res.json())
     .then(data => {
 
-        if(data.error) return;
+    if(data.error) return;
 
-        const docEl = document.getElementById("kpi-documents");
-        const trendEl = document.getElementById("kpi-documents-trend");
+    // Documents
+    const docEl = document.querySelector(".kpi.blue .kpi-value");
+    const trendEl = document.getElementById("kpi-documents-trend");
 
-        const oldValue = parseInt(docEl.innerText) || 0;
+    docEl.textContent = data.documents.toLocaleString();
 
-        animateValue(docEl, oldValue, data.documents, 600);
+    if(data.documents_change >= 0){
+        trendEl.innerHTML =
+          `<span style="color:#1F9D55;">▲ ${data.documents_change}% vs previous</span>`;
+    }else{
+        trendEl.innerHTML =
+          `<span style="color:#E11D48;">▼ ${Math.abs(data.documents_change)}% vs previous</span>`;
+    }
 
-        if(data.documents_change >= 0){
-            trendEl.innerHTML =
-              `<span style="color:#1F9D55;">▲ ${data.documents_change}% vs previous</span>`;
-        }else{
-            trendEl.innerHTML =
-              `<span style="color:#E11D48;">▼ ${Math.abs(data.documents_change)}% vs previous</span>`;
-        }
+    // Active
+    document.querySelector(".kpi.green .kpi-value")
+        .textContent = data.active_docs.toLocaleString();
+
+    // Archived
+    document.querySelector(".kpi.gray .kpi-value")
+        .textContent = data.archived_docs.toLocaleString();
+
+    // Activities
+    document.querySelector(".kpi.orange .kpi-value")
+        .textContent = data.activities.toLocaleString();
+
+    // Users
+    document.querySelector(".kpi.cyan .kpi-value")
+        .textContent = data.users.toLocaleString();
+
+    // Departments
+    document.querySelector(".kpi.purple .kpi-value")
+        .textContent = data.departments.toLocaleString();
 
     });
 }
@@ -1183,21 +1218,17 @@ function loadEnterpriseKPI(rangeValue){
 // Range Button Controller
 // ==========================
 
-document.querySelectorAll(".range-buttons button")
+document.querySelectorAll(".range-segment button")
 .forEach(btn => {
 
     btn.addEventListener("click", function(){
 
-        // إزالة active من الجميع
-        document.querySelectorAll(".range-buttons button")
+        document.querySelectorAll(".range-segment button")
         .forEach(b => b.classList.remove("active"));
 
-        // تفعيل الزر الحالي
         this.classList.add("active");
 
         const range = this.getAttribute("data-range");
-
-        console.log("Selected range:", range); // للتأكد أنه يعمل
 
         loadEnterpriseKPI(range);
     });
@@ -1230,6 +1261,7 @@ document.addEventListener("DOMContentLoaded", function(){
     });
 });
 
+document.querySelector('[data-range="30"]').classList.add("active");
 // Initial load
 loadEnterpriseKPI(30);
 

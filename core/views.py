@@ -361,9 +361,31 @@ def kpi_enterprise_api(request):
         return round(((current - previous) / previous) * 100, 1)
 
     data = {
-        "documents": current_docs,
-        "documents_change": calculate_change(current_docs, prev_docs),
-    }
+    "documents": current_docs,
+    "documents_change": calculate_change(current_docs, prev_docs),
+
+    "active_docs": Document.objects.filter(
+        status=Document.Status.ACTIVE,
+        created_at__gte=start
+    ).count(),
+
+    "archived_docs": Document.objects.filter(
+        status=Document.Status.ARCHIVED,
+        created_at__gte=start
+    ).count(),
+
+    "activities": DocumentActivity.objects.filter(
+        timestamp__gte=start
+    ).count(),
+
+    "users": User.objects.filter(
+        is_active=True
+    ).count(),
+
+    "departments": Department.objects.filter(
+        is_active=True
+    ).count(),
+}
 
     cache.set(cache_key, data, 60)
 

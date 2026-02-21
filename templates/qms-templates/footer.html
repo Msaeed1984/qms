@@ -4,93 +4,111 @@
     :root{
       --em-blue:#006EB3;
       --em-green:#5BC500;
-      --body:#ffffff;
       --text:#0B1220;
       --muted: rgba(11,18,32,.62);
-      --shadow: 0 16px 36px rgba(0,0,0,.10);
-      --r:16px;
       --container:1200px;
     }
 
-.qms-footer{
-  background: var(--em-green);
-  color:#06220a;
-  box-shadow: 0 -10px 26px rgba(0,0,0,.10);
+   /* ===== Footer Base (Refined Transparent Style) ===== */
+      /* ===== Refined Transparent Compact Footer ===== */
+      .qms-footer{
+        width:100%;
+        margin:50px auto 0 auto;
 
-  position:fixed;
-  bottom:0;
-  left:0;
-  width:100%;
-}
+        /* شفافية أعلى */
+        background: rgba(255,255,255,.45);
+        backdrop-filter: blur(14px);
 
+        border-top:2px solid rgba(0,110,179,.85);
+        box-shadow: 0 -4px 14px rgba(0,0,0,.04);
 
-    .qms-footer .wrap{
-      max-width: var(--container);
-      margin:0 auto;
-      padding: 16px 18px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      flex-wrap:wrap;
-    }
+        color: var(--text);
+      }
 
-    .qms-footer .left{
-      display:flex;
-      flex-direction:column;
-      line-height:1.15;
-    }
-    .qms-footer .left .t{
-      font-weight:500;
-      letter-spacing:.2px;
-      color:#ffffff;
-    }
-    .qms-footer .left .s{
-      font-size:9px;
-      font-weight:300;
-      opacity:.95;
-    }
+      /* نجعل الفوتر أضيق ومتمركز */
+   /* نجعل الفوتر أضيق لكن بمحاذاة اليسار */
+        .qms-footer .wrap{
+          max-width: 100%;      /* يرجع بعرض الصفحة */
+          margin: 0;            /* لا توسيط */
+          padding: 12px 40px;   /* مسافة احترافية من الجانبين */
+          display:flex;
+          align-items:center;
+          justify-content:space-between;
+          gap:20px;
+        }
+      /* Left */
+      .qms-footer .left{
+        display:flex;
+        flex-direction:column;
+        gap:6px;
+      }
 
-    .qms-footer .right{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-    }
+      .qms-footer .left .t{
+        font-weight:800;
+        font-size:14px;
+        letter-spacing:.2px;
+      }
 
-    .pill{
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.55);
-      color:#504949;
-      font-weight:700;
-      font-size:9px;
-      border:1px solid rgba(4,49,11,.12);
-    }
+      .qms-footer .left .s{
+        font-size:12px;
+        font-weight:500;
+        color: rgba(11,18,32,.65);
+      }
 
-    .link{
-      color:#251f1f;
-      text-decoration:none;
-      font-weight:500;
-      font-size:9px;
-      padding: 8px 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.45);
-      border:1px solid rgba(4,49,11,.10);
-      transition:.15s ease;
-    }
-    .link:hover{ transform: translateY(-1px); background: rgba(255,255,255,.62); }
+     .qms-footer .right{
+        display:flex;
+        align-items:center;        /* ✅ الصحيح */
+        justify-content:flex-end;  /* ✅ لضمان يمين */
+        gap:14px;
+      }
 
-    @media (max-width: 640px){
-      .qms-footer .wrap{ justify-content:center; text-align:center; }
-      .qms-footer .right{ justify-content:center; }
-    }
+      /* Version */
+      .pill{
+        padding:7px 14px;
+        border-radius:999px;
+        background: rgba(0,110,179,.10);
+        color: var(--em-blue);
+        font-weight:800;
+        font-size:12px;
+        border:1px solid rgba(0,110,179,.18);
+      }
+
+      /* Links */
+      .link{
+        color: var(--text);
+        text-decoration:none;
+        font-weight:600;
+        font-size:12px;
+        padding:6px 10px;
+        border-radius:6px;
+        transition:.2s ease;
+      }
+
+      .link:hover{
+        background: rgba(0,110,179,.08);
+        color: var(--em-blue);
+      }
+
+      /* Responsive */
+      @media (max-width: 768px){
+        .qms-footer .wrap{
+          flex-direction:column;
+          text-align:center;
+          gap:14px;
+        }
+
+        .qms-footer .right{
+          justify-content:center;
+        }
+      }
+  
   </style>
 
   <div class="wrap">
     <div class="left">
-      <div class="t">EMSTEEL • Quality Document Management</div>
+      <div class="t">
+  © {% now "Y" %} EMSTEEL • Quality Document Management
+      </div>
       <div class="s">Paperless access • Controlled viewing • Audit & traceability</div>
     </div>
 
