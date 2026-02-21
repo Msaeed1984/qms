@@ -1,0 +1,114 @@
+{% include "qms-templates/header.html" %}
+
+<style>
+body{
+  background:#f4f7fb;
+}
+
+.page{
+  max-width:700px;
+  margin:60px auto;
+  padding:0 20px;
+}
+
+.card{
+  background:#fff;
+  border-radius:22px;
+  box-shadow:0 20px 45px rgba(0,0,0,.08);
+  padding:36px;
+  text-align:center;
+}
+
+.icon{
+  font-size:48px;
+  margin-bottom:20px;
+}
+
+.title{
+  font-size:22px;
+  font-weight:900;
+  margin-bottom:10px;
+}
+
+.subtitle{
+  font-size:14px;
+  color:rgba(11,18,32,.60);
+  margin-bottom:28px;
+}
+
+.doc-box{
+  background:#fafcff;
+  border:1px solid rgba(11,18,32,.08);
+  border-radius:14px;
+  padding:16px;
+  margin-bottom:30px;
+  font-weight:700;
+}
+
+.actions{
+  display:flex;
+  justify-content:center;
+  gap:14px;
+}
+
+.btn{
+  padding:12px 22px;
+  border-radius:14px;
+  font-weight:800;
+  border:none;
+  cursor:pointer;
+  font-size:14px;
+  transition:.2s ease;
+}
+
+.btn-danger{
+  background:#E11D48;
+  color:#fff;
+}
+
+.btn-danger:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 18px rgba(225,29,72,.25);
+}
+
+.btn-secondary{
+  background:#fff;
+  border:1px solid rgba(0,0,0,.15);
+}
+</style>
+
+<div class="page">
+  <div class="card">
+
+    <div class="icon">⚠️</div>
+
+    <div class="title">
+      Confirm Document Deletion
+    </div>
+
+    <div class="subtitle">
+      This action cannot be undone. The document and its activity history will be permanently removed.
+    </div>
+
+    <div class="doc-box">
+      {{ document.title }}
+    </div>
+
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="actions">
+        <a href="{% url 'documents:list' %}" class="btn btn-secondary">
+          Cancel
+        </a>
+
+        <button type="submit" class="btn btn-danger">
+          Delete Permanently
+        </button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+{% include "qms-templates/footer.html" %}

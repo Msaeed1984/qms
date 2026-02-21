@@ -1,20 +1,21 @@
 {# qms-templates/login.html #}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>QMS • Sign in</title>
+  <title>QMS • Secure Login</title>
 
   <style>
     :root{
       --em-blue:#006EB3;
       --em-green:#5BC500;
       --text:#0B1220;
-      --muted: rgba(11,18,32,.62);
-      --line: rgba(11,18,32,.12);
-      --shadow: 0 18px 46px rgba(0,0,0,.12);
-      --r:18px;
+      --muted:rgba(11,18,32,.60);
+      --line:rgba(11,18,32,.10);
+      --shadow:0 20px 60px rgba(0,0,0,.12);
+      --r:20px;
     }
 
     *{ box-sizing:border-box; }
@@ -23,130 +24,63 @@
     body{
       font-family:"Segoe UI", Tahoma, Arial, sans-serif;
       background:
-        radial-gradient(900px 380px at 20% 0%, rgba(0,110,179,.12), transparent 55%),
-        radial-gradient(800px 360px at 85% 10%, rgba(91,197,0,.12), transparent 60%),
-        #fff;
-      color:var(--text);
-    }
-
-    .page{
-      min-height:100vh;
-      display:grid;
-      place-items:center;
-      padding:22px;
-    }
-
-    .card{
-      width:min(980px, 100%);
-      display:grid;
-      grid-template-columns: 1.05fr .95fr;
-      gap:18px;
-      background:#fff;
-      border:1px solid var(--line);
-      border-radius: 22px;
-      box-shadow: var(--shadow);
-      overflow:hidden;
-    }
-
-    /* LEFT SIDE */
-    .left{
-      padding:26px;
-      background: linear-gradient(135deg, rgba(0,110,179,.08), rgba(91,197,0,.06));
-    }
-
-    .brand{
+        radial-gradient(800px 400px at 10% 0%, rgba(0,110,179,.10), transparent 60%),
+        radial-gradient(800px 400px at 90% 10%, rgba(91,197,0,.10), transparent 60%),
+        #ffffff;
       display:flex;
       align-items:center;
-      gap:12px;
-      margin-bottom:14px;
+      justify-content:center;
+      padding:20px;
+    }
+
+    .login-card{
+      width:100%;
+      max-width:420px;
+      background:#fff;
+      border-radius:28px;
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+      padding:34px 30px;
+    }
+
+    /* HEADER */
+    .brand{
+      text-align:center;
+      margin-bottom:26px;
     }
 
     .logo{
-      width:44px;height:44px;
-      border-radius:14px;
-      background: var(--em-blue);
-      color:#fff;
-      display:grid;
-      place-items:center;
-      font-weight:900;
-      font-size:18px;
-      box-shadow: 0 12px 24px rgba(0,110,179,.25);
-    }
-
-    .btxt .t{
-      font-weight:900;
-      font-size:16px;
-    }
-
-    .btxt .s{
-      margin-top:2px;
-      font-size:12.5px;
-      color: var(--muted);
-    }
-
-    .headline{
-      margin:14px 0 0;
-      font-size:22px;
-      font-weight:900;
-    }
-
-    .sub{
-      margin-top:8px;
-      color: var(--muted);
-      font-size:13.5px;
-      line-height:1.6;
-    }
-
-    .rules{
-      margin-top:18px;
-      display:grid;
-      gap:10px;
-    }
-
-    .rule{
       display:flex;
-      gap:10px;
-      padding:12px;
-      border:1px solid var(--line);
-      border-radius:14px;
-      background:#fff;
+      justify-content:center;
+      align-items:center;
+      margin:0 auto 18px;
     }
 
-    .dot{
-      width:10px;height:10px;
-      border-radius:999px;
-      margin-top:4px;
-      background: var(--em-green);
-      box-shadow: 0 0 0 4px rgba(91,197,0,.14);
+    .logo img{
+      max-width:170px;
+      height:auto;
+      object-fit:contain;
     }
 
-    .rule b{ font-size:13.3px; }
-    .rule span{ font-size:12.5px; color: var(--muted); display:block; }
+    .brand h1{
+      margin:0;
+      font-size:18px;
+      font-weight:800;
+      letter-spacing:.4px;
+    }
 
-    /* RIGHT SIDE */
-    .right{
-      padding:26px;
+    .brand p{
+      margin-top:6px;
+      font-size:13px;
+      color:var(--muted);
+    }
+
+    /* FORM */
+    .field{
+      margin-bottom:14px;
       display:flex;
       flex-direction:column;
-      justify-content:center;
-    }
-
-    .form-title{
-      font-size:16px;
-      font-weight:900;
-      margin-bottom:8px;
-    }
-
-    .form-sub{
-      margin-bottom:16px;
-      font-size:12.8px;
-      color: var(--muted);
-    }
-
-    .field{
-      display:grid;
       gap:6px;
-      margin-bottom:12px;
     }
 
     label{
@@ -155,149 +89,141 @@
     }
 
     input{
-      height:44px;
+      height:46px;
       border-radius:14px;
-      border:1px solid rgba(11,18,32,.14);
+      border:1px solid rgba(11,18,32,.15);
       padding:0 14px;
       font-size:13.5px;
+      transition:.2s ease;
       outline:none;
     }
 
     input:focus{
-      border-color: rgba(0,110,179,.55);
-      box-shadow: 0 0 0 4px rgba(0,110,179,.14);
+      border-color:rgba(0,110,179,.60);
+      box-shadow:0 0 0 4px rgba(0,110,179,.14);
     }
 
     .error{
-      margin: 10px 0;
-      padding:10px 12px;
+      margin-bottom:12px;
+      padding:12px;
       border-radius:14px;
-      background: rgba(225,29,72,.08);
-      border:1px solid rgba(225,29,72,.18);
-      color:#9f1239;
       font-size:12.8px;
       font-weight:700;
+      background:rgba(225,29,72,.08);
+      border:1px solid rgba(225,29,72,.20);
+      color:#9f1239;
     }
 
     .btn{
-      height:46px;
+      width:100%;
+      height:48px;
       border:none;
       border-radius:14px;
-      cursor:pointer;
       font-weight:900;
-      font-size:13.8px;
+      font-size:14px;
+      cursor:pointer;
       color:#fff;
-      background: linear-gradient(90deg, #006EB3, #0A84D6);
-      box-shadow: 0 14px 28px rgba(0,110,179,.22);
+      background:linear-gradient(90deg,var(--em-blue),#0A84D6);
+      box-shadow:0 14px 30px rgba(0,110,179,.25);
       margin-top:6px;
+      transition:.2s ease;
     }
 
-    .btn:hover{ transform: translateY(-1px); }
-
-    .meta{
-      margin-top:12px;
-      font-size:12.3px;
-      color: var(--muted);
+    .btn:hover{
+      transform:translateY(-2px);
+    }
+    /* FOOTER */
+    .footer-meta{
+      margin-top:22px;
       display:flex;
-      justify-content:space-between;
+      justify-content:center;
     }
 
-    .meta a{
-      color: var(--em-blue);
+    .footer-center{
+      text-align:center;
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .tagline{
+      font-size:11px;
+      letter-spacing:.3px;
+      color:rgba(11,18,32,.50);
+    }
+
+    .footer-center a{
+      margin-top:6px;
       text-decoration:none;
       font-weight:800;
+      color:var(--em-blue);
     }
 
-    @media (max-width: 920px){
-      .card{ grid-template-columns: 1fr; }
+    .tagline{
+      font-size:11px;
+      letter-spacing:.3px;
+      color:rgba(11,18,32,.50);
     }
+
+    .footer-meta a{
+      text-decoration:none;
+      font-weight:800;
+      color:var(--em-blue);
+    }
+
+    @media (max-width:480px){
+      .login-card{
+        padding:26px 20px;
+      }
+    }
+
   </style>
 </head>
 
 <body>
-  <div class="page">
-    <div class="card">
 
-      <!-- LEFT -->
-      <section class="left">
-        <div class="brand">
-          <div class="logo">Q</div>
-          <div class="btxt">
-            <div class="t">Quality Document Management</div>
-            <div class="s">Digital-first • Paperless • Secure Access</div>
-          </div>
-        </div>
+  <div class="login-card">
 
-        <div class="headline">Sign in to continue</div>
-        <p class="sub">
-          Access is granted based on your department and group permissions.
-        </p>
-
-        <div class="rules">
-          <div class="rule">
-            <div class="dot"></div>
-            <div>
-              <b>Employees</b>
-              <span>View department documents only.</span>
-            </div>
-          </div>
-          <div class="rule">
-            <div class="dot"></div>
-            <div>
-              <b>Managers</b>
-              <span>View all department activity.</span>
-            </div>
-          </div>
-          <div class="rule">
-            <div class="dot"></div>
-            <div>
-              <b>Quality</b>
-              <span>Access full Quality Control Center.</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- RIGHT -->
-      <section class="right">
-        <h1 class="form-title">QMS Login</h1>
-        <p class="form-sub">
-          Use your system credentials.
-        </p>
-
-        <form method="post">
-          {% csrf_token %}
-
-          {% if messages %}
-            {% for message in messages %}
-              <div class="error">{{ message }}</div>
-            {% endfor %}
-          {% endif %}
-
-          {% if form.errors %}
-            <div class="error">Invalid username or password.</div>
-          {% endif %}
-
-          <div class="field">
-            <label>Username</label>
-            <input type="text" name="username" required>
-          </div>
-
-          <div class="field">
-            <label>Password</label>
-            <input type="password" name="password" required>
-          </div>
-
-          <button class="btn" type="submit">Sign in</button>
-
-          <div class="meta">
-            <span>© EMSTEEL</span>
-            <a href="/admin/">Admin</a>
-          </div>
-        </form>
-      </section>
-
+    <!-- BRAND -->
+    <div class="brand">
+      <div class="logo">
+        <img src="{% static 'images/emsteel-logo.png' %}" alt="EMSTEEL Logo">
+      </div>
+      <h1>Quality Management System</h1>
+      <p>Secure Digital Document Control</p>
     </div>
+
+    <!-- FORM -->
+    <form method="post">
+      {% csrf_token %}
+
+      {% if form.errors %}
+        <div class="error">Invalid username or password.</div>
+      {% endif %}
+
+      <div class="field">
+        <label>Username</label>
+        <input type="text" name="username" required>
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        <input type="password" name="password" required>
+      </div>
+
+      <button type="submit" class="btn">Sign In</button>
+
+      <div class="footer-meta">
+        <div class="footer-center">
+          <span>© EMSTEEL - IT Client Excellence</span>
+          <div class="tagline">Enterprise Digital Governance Platform</div>
+        </div>
+      </div>
+
+    </form>
   </div>
+
 </body>
 </html>

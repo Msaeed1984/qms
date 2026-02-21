@@ -12,4 +12,7 @@ urlpatterns = [
 
     # Quality Center
     path("quality/", views.quality, name="quality"),
+    # Real-Time Security Counter
+    path("security-metrics/", views.security_metrics_api, name="security_metrics"),
+    path("kpi-enterprise/", views.kpi_enterprise_api, name="kpi_enterprise"),
 ]

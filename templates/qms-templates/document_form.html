@@ -1,102 +1,332 @@
 {% include "qms-templates/header.html" %}
 
 <style>
-  .wrap{
-    max-width:900px;
-    margin:18px auto 0;
-    padding:0 18px 28px;
-  }
+body{
+  background:linear-gradient(to bottom,#f4f7fb,#eef2f8);
+}
 
-  .card{
-    background:#fff;
-    border:1px solid rgba(11,18,32,.10);
-    border-radius:18px;
-    box-shadow:0 14px 30px rgba(0,0,0,.08);
-    padding:22px;
-  }
+.page{
+  max-width:1100px;
+  margin:40px auto;
+  padding:0 20px 60px;
+}
 
-  h2{
-    margin-top:0;
-    font-weight:900;
-  }
+.card{
+  background:#fff;
+  border-radius:26px;
+  box-shadow:0 25px 60px rgba(0,0,0,.08);
+  padding:36px;
+}
 
-  .form-row{
-    margin-bottom:14px;
-  }
+/* ===== Header ===== */
+.card-header{
+  margin-bottom:32px;
+  border-bottom:1px solid rgba(0,0,0,.08);
+  padding-bottom:18px;
+}
 
-  label{
-    font-weight:700;
-    display:block;
-    margin-bottom:6px;
-  }
+.card-header h2{
+  margin:0;
+  font-size:28px;
+  font-weight:900;
+}
 
-  input, textarea, select{
-    width:100%;
-    padding:10px;
-    border-radius:10px;
-    border:1px solid rgba(0,0,0,.15);
-  }
+.card-header p{
+  margin-top:6px;
+  color:rgba(11,18,32,.60);
+  font-size:14px;
+}
 
-  .btn{
-    padding:10px 16px;
-    border-radius:10px;
-    border:0;
-    background:#006EB3;
-    color:#fff;
-    font-weight:700;
-    cursor:pointer;
+/* ===== Sections ===== */
+.section{
+  margin-bottom:30px;
+  padding:26px;
+  border-radius:20px;
+  background:#fafcff;
+  border:1px solid rgba(11,18,32,.08);
+  transition:.2s ease;
+}
+
+.section:hover{
+  background:#f3f8ff;
+}
+
+.section h4{
+  margin:0 0 20px;
+  font-size:13px;
+  font-weight:900;
+  letter-spacing:.8px;
+  text-transform:uppercase;
+  color:#006EB3;
+}
+
+/* ===== Grid ===== */
+.grid-2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:22px;
+}
+
+.grid-1{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:22px;
+}
+
+@media(max-width:900px){
+  .grid-2{
+    grid-template-columns:1fr;
   }
+}
+
+/* ===== Inputs ===== */
+.form-group{
+  display:flex;
+  flex-direction:column;
+}
+
+label{
+  font-weight:800;
+  font-size:13px;
+  margin-bottom:6px;
+}
+
+input, textarea, select{
+  padding:12px 14px;
+  border-radius:14px;
+  border:1px solid rgba(0,0,0,.15);
+  font-size:14px;
+  transition:.2s ease;
+  background:#fff;
+}
+
+input:focus, textarea:focus, select:focus{
+  outline:none;
+  border-color:#006EB3;
+  box-shadow:0 0 0 3px rgba(0,110,179,.12);
+}
+
+textarea{
+  min-height:100px;
+}
+
+/* ===== File Upload Box ===== */
+.file-box{
+  border:2px dashed rgba(0,110,179,.25);
+  padding:22px;
+  border-radius:16px;
+  background:#eef6fc;
+}
+
+/* ===== Readers Section ===== */
+.readers-box{
+  background:#fff;
+  border-radius:16px;
+  border:1px solid rgba(0,0,0,.12);
+  padding:14px;
+}
+
+.readers-box select{
+  width:100%;
+  min-height:130px;
+  border:none;
+  outline:none;
+  background:transparent;
+}
+
+.readers-hint{
+  margin-top:8px;
+  font-size:12px;
+  color:rgba(0,0,0,.55);
+}
+
+/* ===== Buttons ===== */
+.actions{
+  margin-top:36px;
+  display:flex;
+  justify-content:flex-end;
+  gap:14px;
+}
+
+.btn{
+  padding:13px 24px;
+  border-radius:16px;
+  font-weight:800;
+  border:none;
+  cursor:pointer;
+  font-size:14px;
+  transition:.2s ease;
+}
+
+.btn-primary{
+  background:#006EB3;
+  color:#fff;
+}
+
+.btn-primary:hover{
+  transform:translateY(-2px);
+  box-shadow:0 12px 22px rgba(0,110,179,.25);
+}
+
+.btn-success{
+  background:#1F9D55;
+  color:#fff;
+}
+
+.btn-success:hover{
+  transform:translateY(-2px);
+  box-shadow:0 12px 22px rgba(31,157,85,.25);
+}
+
+.btn-secondary{
+  background:#fff;
+  border:1px solid rgba(0,0,0,.15);
+}
 </style>
 
-<div class="wrap">
+<div class="page">
   <div class="card">
-    <h2>
+
+    <!-- HEADER -->
+    <div class="card-header">
       {% if document %}
-        ✏️ Edit Document
+        <h2>✏️ Edit Document</h2>
+        <p>Update document information and access permissions.</p>
       {% else %}
-        ⬆️ Upload Document
+        <h2>⬆ Upload New Document</h2>
+        <p>Create a controlled document inside the QMS system.</p>
       {% endif %}
-    </h2>
+    </div>
 
     <form method="post" enctype="multipart/form-data">
       {% csrf_token %}
 
-      <div class="form-row">
-        <label>Title</label>
-        {{ form.title }}
+      <!-- DOCUMENT INFO -->
+      <div class="section">
+        <h4>Document Information</h4>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label>Title</label>
+            {{ form.title }}
+          </div>
+
+          <div class="form-group">
+            <label>Department</label>
+            {{ form.department }}
+          </div>
+        </div>
+
+        <div class="grid-1" style="margin-top:22px;">
+          <div class="form-group">
+            <label>Description</label>
+            {{ form.description }}
+          </div>
+        </div>
       </div>
 
-      <div class="form-row">
-        <label>Description</label>
-        {{ form.description }}
+      <!-- STATUS -->
+      <div class="section">
+        <h4>Status & Control</h4>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label>Status</label>
+            {{ form.status }}
+          </div>
+
+          <div class="form-group">
+            <label>Disabled Reason</label>
+            {{ form.disabled_reason }}
+          </div>
+        </div>
       </div>
 
-      <div class="form-row">
-        <label>Department</label>
-        {{ form.department }}
+      <!-- FILE -->
+      <div class="section">
+        <h4>Document File</h4>
+
+        <div class="file-box">
+          {{ form.pdf_file }}
+        </div>
       </div>
 
-      <div class="form-row">
-        <label>PDF File</label>
-        {{ form.pdf_file }}
+      <!-- ACCESS CONTROL -->
+            <div class="section" id="accessSection" style="display:none;">
+            <h4>Access Control</h4>
+
+            <div class="form-group">
+                <label>Shared Readers</label>
+
+                <div class="readers-box">
+                <select name="readers" id="readersSelect" multiple></select>
+                </div>
+
+                <div class="readers-hint">
+                Select employees allowed to read this document.
+                </div>
+            </div>
+            </div>
+
+      <!-- ACTIONS -->
+      <div class="actions">
+        <a href="{% url 'documents:list' %}" class="btn btn-secondary">Cancel</a>
+
+        {% if document %}
+          <button type="submit" class="btn btn-success">Update Document</button>
+        {% else %}
+          <button type="submit" class="btn btn-primary">Create Document</button>
+        {% endif %}
       </div>
 
-      <div class="form-row">
-        <label>Status</label>
-        {{ form.status }}
-      </div>
-
-      <div class="form-row">
-        <label>Disabled Reason</label>
-        {{ form.disabled_reason }}
-      </div>
-
-      <br>
-      <button type="submit" class="btn">
-        💾 Save
-      </button>
     </form>
+
   </div>
 </div>
 
 {% include "qms-templates/footer.html" %}
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+
+    const departmentSelect = document.querySelector("[name='department']");
+    const accessSection = document.getElementById("accessSection");
+    const readersSelect = document.getElementById("readersSelect");
+
+    if(!departmentSelect || !accessSection || !readersSelect){
+        return;
+    }
+
+    function loadUsers(departmentId){
+        fetch(`/documents/ajax/department-users/?department_id=${departmentId}`)
+            .then(response => response.json())
+            .then(data => {
+                readersSelect.innerHTML = "";
+
+                data.users.forEach(user => {
+                    const option = document.createElement("option");
+                    option.value = user.id;
+                    option.textContent = user.username;
+                    readersSelect.appendChild(option);
+                });
+            });
+    }
+
+    departmentSelect.addEventListener("change", function(){
+        const deptId = this.value;
+
+        if(deptId){
+            accessSection.style.display = "block";
+            loadUsers(deptId);
+        } else {
+            accessSection.style.display = "none";
+            readersSelect.innerHTML = "";
+        }
+    });
+
+    if(departmentSelect.value){
+        accessSection.style.display = "block";
+        loadUsers(departmentSelect.value);
+    }
+
+});
+</script>

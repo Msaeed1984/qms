@@ -28,4 +28,7 @@ urlpatterns = [
     # Delete Document
     # =====================================================
     path("delete/<int:pk>/", views.document_delete, name="delete"),
+    path("ajax/department-users/", views.get_department_users, name="department_users"),
+    path("audit/", views.audit_dashboard, name="audit_dashboard"),
+    path("quality/", views.quality_center, name="quality_center"),
 ]
