@@ -774,34 +774,55 @@ tbody tr:last-child td{
 <div class="kpis">
 
   <div class="kpi blue">
-  <div class="kpi-top">
-    <i data-lucide="file-text"></i>
-    <span>Documents</span>
-  </div>
 
- <div class="kpi-value count-up"
-
-     data-value="{{ kpi_total_docs }}">
-    {{ kpi_total_docs }}
-</div>
-
-  <div id="kpi-documents-trend"
-       style="font-size:12px;font-weight:700;margin-top:6px;">
-  </div>
-</div>
-
-
-    <div class="kpi green">
     <div class="kpi-top">
-      <i data-lucide="check-circle"></i>
-      <span>Active</span>
+      <i data-lucide="file-text"></i>
+      <span>Documents</span>
     </div>
 
     <div class="kpi-value count-up"
-        data-value="{{ kpi_active_docs }}">
-        {{ kpi_active_docs }}
+        data-value="{{ kpi_total_docs }}">
+      {{ kpi_total_docs }}
     </div>
+
+    <!-- Trend -->
+    <div id="kpi-documents-trend"
+        style="font-size:12px;font-weight:700;margin-top:6px;">
+    </div>
+
+    <!-- Disabled Badge -->
+    <div style="
+          position:absolute;
+          top:12px;
+          right:12px;
+          background:rgba(239,68,68,.12);
+          color:#ef4444;
+          font-size:11px;
+          font-weight:700;
+          padding:4px 8px;
+          border-radius:12px;
+  ">
+        <span id="disabledCount">{{ disabled_docs }}</span> Disabled
+    </div>
+
   </div>
+
+
+    <div class="kpi green">
+
+      <div class="kpi-top">
+        <i data-lucide="check-circle"></i>
+        <span>Active</span>
+      </div>
+
+      <div class="kpi-value count-up"
+          data-value="{{ kpi_active_docs }}">
+        {{ kpi_active_docs }}
+      </div>
+
+    
+
+    </div>
 
   <div class="kpi gray">
     <div class="kpi-top">
@@ -879,37 +900,45 @@ tbody tr:last-child td{
 
 <div class="security-grid">
 
-  <div class="security-box danger">
-    <div class="sec-icon">
-      <i data-lucide="alert-triangle"></i>
+      <div class="security-box danger">
+        <div class="sec-icon">
+          <i data-lucide="alert-triangle"></i>
+        </div>
+        <div class="sec-value risk-attempts">
+            {{ risk_disabled_attempts|default:0 }}
+        </div>
+        <div class="sec-title">Disabled Attempts</div>
     </div>
-    <div class="sec-value">{{ risk_disabled_attempts|default:0 }}</div>
-    <div class="sec-title">Disabled Attempts</div>
-  </div>
 
-  <div class="security-box {{ risk_level|lower }}">
-    <div class="sec-icon">
-      <i data-lucide="activity"></i>
+      <div class="security-box {{ risk_level|lower }}">
+        <div class="sec-icon">
+          <i data-lucide="activity"></i>
+        </div>
+        <div class="sec-value risk-level">
+            {{ risk_level }}
+        </div>
+        <div class="sec-title">Risk Level</div>
     </div>
-    <div class="sec-value">{{ risk_level }}</div>
-    <div class="sec-title">Risk Level</div>
-  </div>
 
-  <div class="security-box info">
-    <div class="sec-icon">
-      <i data-lucide="user"></i>
+      <div class="security-box info">
+        <div class="sec-icon">
+          <i data-lucide="user"></i>
+        </div>
+        <div class="sec-value small risk-user">
+            {{ risk_top_user }}
+        </div>
+        <div class="sec-title">Top Active User</div>
     </div>
-    <div class="sec-value small">{{ risk_top_user }}</div>
-    <div class="sec-title">Top Active User</div>
-  </div>
 
   <div class="security-box info">
     <div class="sec-icon">
       <i data-lucide="file-text"></i>
     </div>
-    <div class="sec-value small">{{ risk_top_document }}</div>
+    <div class="sec-value small risk-doc">
+        {{ risk_top_document }}
+    </div>
     <div class="sec-title">Top Accessed Document</div>
-  </div>
+</div>
 
 </div>
 </div>
@@ -1172,48 +1201,74 @@ function animateValue(element, start, end, duration) {
 
 function loadEnterpriseKPI(rangeValue){
 
-    fetch(`/kpi-enterprise/?range=${rangeValue}`)
+    fetch(`${KPI_URL}?range=${rangeValue}`)
     .then(res => res.json())
     .then(data => {
 
-    if(data.error) return;
+        if(data.error) return;
 
-    // Documents
-    const docEl = document.querySelector(".kpi.blue .kpi-value");
-    const trendEl = document.getElementById("kpi-documents-trend");
+        // ================= Documents =================
+        const docEl = document.querySelector(".kpi.blue .kpi-value");
+        const trendEl = document.getElementById("kpi-documents-trend");
 
-    docEl.textContent = data.documents.toLocaleString();
+        if(docEl) docEl.textContent = data.documents.toLocaleString();
 
-    if(data.documents_change >= 0){
-        trendEl.innerHTML =
-          `<span style="color:#1F9D55;">▲ ${data.documents_change}% vs previous</span>`;
-    }else{
-        trendEl.innerHTML =
-          `<span style="color:#E11D48;">▼ ${Math.abs(data.documents_change)}% vs previous</span>`;
-    }
+        if(trendEl){
+            if(data.documents_change >= 0){
+                trendEl.innerHTML =
+                  `<span style="color:#1F9D55;">▲ ${data.documents_change}% vs previous</span>`;
+            }else{
+                trendEl.innerHTML =
+                  `<span style="color:#E11D48;">▼ ${Math.abs(data.documents_change)}% vs previous</span>`;
+            }
+        }
 
-    // Active
-    document.querySelector(".kpi.green .kpi-value")
-        .textContent = data.active_docs.toLocaleString();
+        // ================= KPI Updates =================
+        const activeEl = document.querySelector(".kpi.green .kpi-value");
+        const archivedEl = document.querySelector(".kpi.gray .kpi-value");
+        const activitiesEl = document.querySelector(".kpi.orange .kpi-value");
+        const usersEl = document.querySelector(".kpi.cyan .kpi-value");
+        const deptEl = document.querySelector(".kpi.purple .kpi-value");
 
-    // Archived
-    document.querySelector(".kpi.gray .kpi-value")
-        .textContent = data.archived_docs.toLocaleString();
+        if(activeEl) activeEl.textContent = data.active_docs.toLocaleString();
+        if(archivedEl) archivedEl.textContent = data.archived_docs.toLocaleString();
+        if(activitiesEl) activitiesEl.textContent = data.activities.toLocaleString();
+        if(usersEl) usersEl.textContent = data.users.toLocaleString();
+        if(deptEl) deptEl.textContent = data.departments.toLocaleString();
 
-    // Activities
-    document.querySelector(".kpi.orange .kpi-value")
-        .textContent = data.activities.toLocaleString();
+        if(deptEl) deptEl.textContent = data.departments.toLocaleString();
 
-    // Users
-    document.querySelector(".kpi.cyan .kpi-value")
-        .textContent = data.users.toLocaleString();
+        // ================= Disabled Documents =================
+        const disabledEl = document.getElementById("disabledCount");
+        if(disabledEl && data.disabled_docs !== undefined){
+            disabledEl.textContent = data.disabled_docs.toLocaleString();
+      }
 
-    // Departments
-    document.querySelector(".kpi.purple .kpi-value")
-        .textContent = data.departments.toLocaleString();
+        // ================= 🛡 Risk Update =================
+        if(data.risk_attempts !== undefined){
 
-    });
+            const riskAttemptsEl = document.querySelector(".risk-attempts");
+            const riskLevelEl = document.querySelector(".risk-level");
+            const riskUserEl = document.querySelector(".risk-user");
+            const riskDocEl = document.querySelector(".risk-doc");
+
+            if(riskAttemptsEl)
+                riskAttemptsEl.textContent = data.risk_attempts.toLocaleString();
+
+            if(riskLevelEl)
+                riskLevelEl.textContent = data.risk_level;
+
+            if(riskUserEl)
+                riskUserEl.textContent = data.risk_top_user;
+
+            if(riskDocEl)
+                riskDocEl.textContent = data.risk_top_document;
+        }
+
+    })
+    .catch(err => console.error("KPI Load Error:", err));
 }
+
 // ==========================
 // Range Button Controller
 // ==========================

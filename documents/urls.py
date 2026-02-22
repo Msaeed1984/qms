@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from django.views.generic.base import RedirectView
 
 app_name = "documents"
 
@@ -30,5 +31,6 @@ urlpatterns = [
     path("delete/<int:pk>/", views.document_delete, name="delete"),
     path("ajax/department-users/", views.get_department_users, name="department_users"),
     path("audit/", views.audit_dashboard, name="audit_dashboard"),
-    path("quality/", views.quality_center, name="quality_center"),
-]
+    path(
+        "quality/",RedirectView.as_view(pattern_name="core:quality", permanent=False),),
+    ]

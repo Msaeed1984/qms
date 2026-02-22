@@ -3,227 +3,274 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>QMS • Secure Login</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>QMS • Secure Login</title>
 
-  <style>
-    :root{
-      --em-blue:#006EB3;
-      --em-green:#5BC500;
-      --text:#0B1220;
-      --muted:rgba(11,18,32,.60);
-      --line:rgba(11,18,32,.10);
-      --shadow:0 20px 60px rgba(0,0,0,.12);
-      --r:20px;
-    }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; margin:0; }
+<style>
+:root{
+  --em-blue:#006EB3;
+  --em-green:#5BC500;
+  --text:#0B1220;
+  --muted:rgba(11,18,32,.60);
+  --line:rgba(11,18,32,.10);
+  --shadow:0 20px 60px rgba(0,0,0,.12);
+}
 
-    body{
-      font-family:"Segoe UI", Tahoma, Arial, sans-serif;
-      background:
-        radial-gradient(800px 400px at 10% 0%, rgba(0,110,179,.10), transparent 60%),
-        radial-gradient(800px 400px at 90% 10%, rgba(91,197,0,.10), transparent 60%),
-        #ffffff;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:20px;
-    }
+*{box-sizing:border-box;}
+html,body{height:100%;margin:0;}
 
-    .login-card{
-      width:100%;
-      max-width:420px;
-      background:#fff;
-      border-radius:28px;
-      border:1px solid var(--line);
-      box-shadow:var(--shadow);
-      padding:34px 30px;
-    }
+body{
+  font-family:"Segoe UI",Tahoma,Arial,sans-serif;
+  background:
+    radial-gradient(900px 500px at 0% 0%, rgba(0,110,179,.08), transparent 60%),
+    radial-gradient(900px 500px at 100% 10%, rgba(91,197,0,.08), transparent 60%),
+    #fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
 
-    /* HEADER */
-    .brand{
-      text-align:center;
-      margin-bottom:26px;
-    }
+.login-card{
+  width:100%;
+  max-width:420px;
+  background:#fff;
+  border-radius:28px;
+  border:1px solid var(--line);
+  box-shadow:var(--shadow);
+  padding:34px 30px;
+  animation:fadeIn .6s ease;
+}
 
-    .logo{
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      margin:0 auto 18px;
-    }
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(25px);}
+  to{opacity:1;transform:translateY(0);}
+}
 
-    .logo img{
-      max-width:170px;
-      height:auto;
-      object-fit:contain;
-    }
+.brand{text-align:center;margin-bottom:26px;}
+.logo{display:flex;justify-content:center;margin-bottom:18px;}
+.logo img{max-width:170px;}
+.brand h1{margin:0;font-size:18px;font-weight:800;}
+.brand p{margin-top:6px;font-size:13px;color:var(--muted);}
 
-    .brand h1{
-      margin:0;
-      font-size:18px;
-      font-weight:800;
-      letter-spacing:.4px;
-    }
+.field{margin-bottom:14px;display:flex;flex-direction:column;gap:6px;}
+label{font-size:12.5px;font-weight:700;}
 
-    .brand p{
-      margin-top:6px;
-      font-size:13px;
-      color:var(--muted);
-    }
+.input-wrapper{position:relative;}
+.input-wrapper input{
+  width:100%;
+  height:46px;
+  border-radius:9px;
+  border:1px solid rgba(11,18,32,.15);
+  padding:0 42px;
+  font-size:13.5px;
+  transition:.25s ease;
+  outline:none;
+}
 
-    /* FORM */
-    .field{
-      margin-bottom:14px;
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-    }
+.input-wrapper input:focus{
+  border-color:var(--em-blue);
+  box-shadow:0 0 0 4px rgba(0,110,179,.14);
+}
 
-    label{
-      font-size:12.5px;
-      font-weight:700;
-    }
+.icon-left{
+  position:absolute;
+  left:14px;top:50%;
+  transform:translateY(-50%);
+  font-size:14px;
+  color:rgba(11,18,32,.40);
+  transition:.25s ease;
+  pointer-events:none;
+}
 
-    input{
-      height:46px;
-      border-radius:14px;
-      border:1px solid rgba(11,18,32,.15);
-      padding:0 14px;
-      font-size:13.5px;
-      transition:.2s ease;
-      outline:none;
-    }
+input:focus + .icon-left,
+input:not(:placeholder-shown) + .icon-left{
+  color:var(--em-blue);
+}
 
-    input:focus{
-      border-color:rgba(0,110,179,.60);
-      box-shadow:0 0 0 4px rgba(0,110,179,.14);
-    }
+.icon-right{
+  position:absolute;
+  right:14px;top:50%;
+  transform:translateY(-50%);
+  cursor:pointer;
+  font-size:14px;
+  color:rgba(11,18,32,.40);
+}
 
-    .error{
-      margin-bottom:12px;
-      padding:12px;
-      border-radius:14px;
-      font-size:12.8px;
-      font-weight:700;
-      background:rgba(225,29,72,.08);
-      border:1px solid rgba(225,29,72,.20);
-      color:#9f1239;
-    }
+.error{
+  margin-bottom:12px;
+  padding:12px;
+  border-radius:14px;
+  font-size:12.8px;
+  font-weight:700;
+  background:rgba(225,29,72,.08);
+  border:1px solid rgba(225,29,72,.20);
+  color:#9f1239;
+}
 
-    .btn{
-      width:100%;
-      height:48px;
-      border:none;
-      border-radius:14px;
-      font-weight:900;
-      font-size:14px;
-      cursor:pointer;
-      color:#fff;
-      background:linear-gradient(90deg,var(--em-blue),#0A84D6);
-      box-shadow:0 14px 30px rgba(0,110,179,.25);
-      margin-top:6px;
-      transition:.2s ease;
-    }
+.cooldown{
+  background:rgba(255,193,7,.1);
+  border:1px solid rgba(255,193,7,.4);
+  padding:10px;
+  font-size:12px;
+  border-radius:12px;
+  margin-bottom:12px;
+  display:none;
+}
 
-    .btn:hover{
-      transform:translateY(-2px);
-    }
-    /* FOOTER */
-    .footer-meta{
-      margin-top:22px;
-      display:flex;
-      justify-content:center;
-    }
+.btn{
+  width:100%;
+  height:48px;
+  border:none;
+  border-radius:9px;
+  font-weight:900;
+  font-size:14px;
+  cursor:pointer;
+  color:#fff;
+  background:linear-gradient(90deg,var(--em-blue),#0A84D6);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
 
-    .footer-center{
-      text-align:center;
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-      font-size:12px;
-      color:var(--muted);
-    }
+.spinner{
+  width:16px;height:16px;
+  border:2px solid rgba(255,255,255,.4);
+  border-top:2px solid #fff;
+  border-radius:50%;
+  animation:spin .6s linear infinite;
+  display:none;
+}
 
-    .tagline{
-      font-size:11px;
-      letter-spacing:.3px;
-      color:rgba(11,18,32,.50);
-    }
+@keyframes spin{to{transform:rotate(360deg);}}
 
-    .footer-center a{
-      margin-top:6px;
-      text-decoration:none;
-      font-weight:800;
-      color:var(--em-blue);
-    }
+.footer-meta{
+  margin-top:22px;
+  display:flex;
+  justify-content:center;
+  font-size:12px;
+  color:var(--muted);
+}
 
-    .tagline{
-      font-size:11px;
-      letter-spacing:.3px;
-      color:rgba(11,18,32,.50);
-    }
-
-    .footer-meta a{
-      text-decoration:none;
-      font-weight:800;
-      color:var(--em-blue);
-    }
-
-    @media (max-width:480px){
-      .login-card{
-        padding:26px 20px;
-      }
-    }
-
-  </style>
+.session-warning{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:#fff3cd;
+  border:1px solid #ffe69c;
+  padding:14px 18px;
+  border-radius:14px;
+  font-size:13px;
+  display:none;
+  box-shadow:0 10px 30px rgba(0,0,0,.1);
+}
+</style>
 </head>
 
 <body>
 
-  <div class="login-card">
-
-    <!-- BRAND -->
-    <div class="brand">
-      <div class="logo">
-        <img src="{% static 'images/emsteel-logo.png' %}" alt="EMSTEEL Logo">
-      </div>
-      <h1>Quality Management System</h1>
-      <p>Secure Digital Document Control</p>
-    </div>
-
-    <!-- FORM -->
-    <form method="post">
-      {% csrf_token %}
-
-      {% if form.errors %}
-        <div class="error">Invalid username or password.</div>
-      {% endif %}
-
-      <div class="field">
-        <label>Username</label>
-        <input type="text" name="username" required>
-      </div>
-
-      <div class="field">
-        <label>Password</label>
-        <input type="password" name="password" required>
-      </div>
-
-      <button type="submit" class="btn">Sign In</button>
-
-      <div class="footer-meta">
-        <div class="footer-center">
-          <span>© EMSTEEL - IT Client Excellence</span>
-          <div class="tagline">Enterprise Digital Governance Platform</div>
-        </div>
-      </div>
-
-    </form>
+<div class="login-card">
+<div class="brand">
+  <div class="logo">
+    <img src="{% static 'images/emsteel-logo.png' %}" alt="EMSTEEL Logo">
   </div>
+  <h1>Quality Management System</h1>
+  <p>Secure Digital Document Control</p>
+</div>
+
+<form method="post" id="loginForm" autocomplete="off">
+{% csrf_token %}
+
+{% if form.errors %}
+<div class="error" id="errorBox">Invalid username or password.</div>
+{% endif %}
+
+<div class="cooldown" id="cooldownBox"></div>
+
+<div class="field">
+<label>Username</label>
+<div class="input-wrapper">
+<input type="text" name="username" placeholder=" " required autocomplete="username">
+<i class="fa-regular fa-user icon-left"></i>
+</div>
+</div>
+
+<div class="field">
+<label>Password</label>
+<div class="input-wrapper">
+<input type="password" name="password" id="passwordField" placeholder=" " required autocomplete="current-password">
+<i class="fa-solid fa-lock icon-left"></i>
+<i class="fa-regular fa-eye icon-right" onclick="togglePassword()"></i>
+</div>
+</div>
+
+<button type="submit" class="btn" id="submitBtn">
+<span id="btnText">Sign In</span>
+<div class="spinner" id="spinner"></div>
+</button>
+
+<div class="footer-meta">
+© EMSTEEL - IT Client Excellence
+</div>
+</form>
+</div>
+
+<div class="session-warning" id="sessionWarning">
+⚠️ Your session will expire soon due to inactivity.
+</div>
+
+<script>
+let failedAttempts=0;
+
+function togglePassword(){
+const field=document.getElementById("passwordField");
+const icon=document.querySelector(".icon-right");
+if(field.type==="password"){
+field.type="text";
+icon.classList.replace("fa-eye","fa-eye-slash");
+}else{
+field.type="password";
+icon.classList.replace("fa-eye-slash","fa-eye");
+}
+}
+
+document.getElementById("loginForm").addEventListener("submit",function(){
+const btn=document.getElementById("submitBtn");
+const spinner=document.getElementById("spinner");
+const text=document.getElementById("btnText");
+btn.disabled=true;
+spinner.style.display="inline-block";
+text.textContent="Signing In...";
+});
+
+if(document.getElementById("errorBox")){
+failedAttempts++;
+if(failedAttempts>=3){
+startCooldown(30);
+}
+}
+
+function startCooldown(seconds){
+const box=document.getElementById("cooldownBox");
+box.style.display="block";
+let interval=setInterval(()=>{
+box.innerText="Too many attempts. Try again in "+seconds+" seconds.";
+seconds--;
+if(seconds<0){
+clearInterval(interval);
+box.style.display="none";
+}
+},1000);
+}
+
+setTimeout(()=>{
+document.getElementById("sessionWarning").style.display="block";
+},600000);
+</script>
 
 </body>
 </html>

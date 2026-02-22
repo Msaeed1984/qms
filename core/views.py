@@ -318,7 +318,7 @@ def security_metrics_api(request):
 
 
 # =========================================================
-# 📊 Enterprise KPI Range API
+# 📊 Enterprise KPI Range API (Clean + Structured Version)
 # =========================================================
 @login_required
 def kpi_enterprise_api(request):
@@ -336,57 +336,146 @@ def kpi_enterprise_api(request):
         "365": 365,
     }
 
-    days = days_map.get(range_key, 30)
+    from django.utils.timezone import localtime
+    now = localtime()
 
-    cache_key = f"enterprise_kpi_{days}"
-    cached = cache.get(cache_key)
+    # ==============================
+    # Time Range Logic
+    # ==============================
+    if range_key == "1":
+        start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        previous_start = start - timedelta(days=1)
+    else:
+        days = days_map.get(range_key, 30)
+        start = now - timedelta(days=days)
+        previous_start = start - timedelta(days=days)
 
-    if cached:
-        return JsonResponse(cached)
+    # ==============================
+    # Documents KPI (Total ثابت + Change حسب Range)
+    # ==============================
+    total_documents = Document.objects.count()
 
-    now = timezone.now()
-    start = now - timedelta(days=days)
-    previous_start = start - timedelta(days=days)
+    range_documents = Document.objects.filter(
+        created_at__gte=start
+    ).count()
 
-    current_docs = Document.objects.filter(created_at__gte=start).count()
-
-    prev_docs = Document.objects.filter(
+    prev_range_documents = Document.objects.filter(
         created_at__gte=previous_start,
         created_at__lt=start
     ).count()
 
+    # ==============================
+    # Active KPI (Total ثابت + Change حسب Range)
+    # ==============================
+    total_active = Document.objects.filter(
+        status=Document.Status.ACTIVE
+    ).count()
+
+    range_active = Document.objects.filter(
+        status=Document.Status.ACTIVE,
+        created_at__gte=start
+    ).count()
+
+    prev_range_active = Document.objects.filter(
+        status=Document.Status.ACTIVE,
+        created_at__gte=previous_start,
+        created_at__lt=start
+    ).count()
+
+    # ==============================
+    # Disabled Count (ثابت)
+    # ==============================
+    total_disabled = Document.objects.filter(
+        status=Document.Status.DISABLED
+    ).count()
+
+    # ==============================
+    # Risk Intelligence (Range Aware)
+    # ==============================
+    risk_qs = DocumentActivity.objects.filter(
+        action=DocumentActivity.Action.ATTEMPT_DISABLED,
+        timestamp__gte=start,
+        user__isnull=False,
+    )
+
+    risk_attempts = risk_qs.count()
+
+    top_user = (
+        risk_qs
+        .values("user__username")
+        .annotate(total=Count("id"))
+        .order_by("-total")
+        .first()
+    )
+
+    top_doc = (
+        risk_qs
+        .values("document__title")
+        .annotate(total=Count("id"))
+        .order_by("-total")
+        .first()
+    )
+
+    risk_top_user = top_user["user__username"] if top_user else "-"
+    risk_top_document = top_doc["document__title"] if top_doc else "-"
+
+    # Risk Ratio Logic
+    total_activities = DocumentActivity.objects.filter(
+        timestamp__gte=start
+    ).count()
+
+    risk_ratio = (risk_attempts / total_activities) * 100 if total_activities else 0
+
+    if risk_ratio > 60:
+        risk_level = "High"
+    elif risk_ratio > 25:
+        risk_level = "Medium"
+    elif risk_ratio > 0:
+        risk_level = "Low"
+    else:
+        risk_level = "Low"
+
+    # ==============================
+    # Helper
+    # ==============================
     def calculate_change(current, previous):
         if previous == 0:
             return 100 if current > 0 else 0
         return round(((current - previous) / previous) * 100, 1)
 
+    # ==============================
+    # Final JSON
+    # ==============================
     data = {
-    "documents": current_docs,
-    "documents_change": calculate_change(current_docs, prev_docs),
+        "documents": total_documents,
+        "documents_change": calculate_change(range_documents, prev_range_documents),
 
-    "active_docs": Document.objects.filter(
-        status=Document.Status.ACTIVE,
-        created_at__gte=start
-    ).count(),
+        "active_docs": total_active,
+        "active_change": calculate_change(range_active, prev_range_active),
 
-    "archived_docs": Document.objects.filter(
-        status=Document.Status.ARCHIVED,
-        created_at__gte=start
-    ).count(),
+        "disabled_docs": total_disabled,
 
-    "activities": DocumentActivity.objects.filter(
-        timestamp__gte=start
-    ).count(),
+        "archived_docs": Document.objects.filter(
+            status=Document.Status.ARCHIVED,
+            created_at__gte=start
+        ).count(),
 
-    "users": User.objects.filter(
-        is_active=True
-    ).count(),
+        "activities": total_activities,
 
-    "departments": Department.objects.filter(
-        is_active=True
-    ).count(),
-}
+        "users": User.objects.filter(
+            is_active=True
+        ).count(),
 
-    cache.set(cache_key, data, 60)
+        "departments": Department.objects.filter(
+            is_active=True
+        ).count(),
+
+        # Risk
+        "risk_attempts": risk_attempts,
+        "risk_level": risk_level,
+        "risk_top_user": risk_top_user,
+        "risk_top_document": risk_top_document,
+    }
 
     return JsonResponse(data)
+  

@@ -43,28 +43,34 @@
   margin-top:2px;          /* 👈 يرفعهم قليلًا */
 }
 
-.search,
-.filters select,
-.chip{
-  margin:0;
-}
-
-.search{ 
-  position:relative; 
-  width:320px; 
-  max-width:85vw; 
+.search{
+  position:relative;
+  width:320px;
+  max-width:85vw;
+  display:flex;
+  align-items:center;
 }
 
 .search input{
   width:100%;
   height:42px;
-  padding:0 14px 0 40px;
+  padding:0 14px 0 42px;
   border-radius:999px;
   border:1px solid var(--line);
   font-size:13.5px;
   box-sizing:border-box;
-  line-height:42px;        /* 👈 يثبت المستوى */
 }
+
+.search .icon{
+  position:absolute;
+  left:14px;
+  height:42px;
+  display:flex;
+  align-items:center;   /* 👈 توسيط عمودي حقيقي */
+  pointer-events:none;
+  color: rgba(11,18,32,.55);
+}
+
 
 .filters select{
   height:42px;
@@ -348,9 +354,9 @@
         {% endif %}
 
         <!-- 📊 Total Counter -->
-        <div class="chip">
-          <i class="bi bi-files"></i> Total: {{ total_docs }}
-        </div>
+        <div class="chip" id="docCounter">
+        <i class="bi bi-files"></i> Total: <span id="docCount">{{ total_docs }}</span>
+      </div>
 
       </div>
     </div>
@@ -401,20 +407,38 @@
 </div>
 
 {% include "qms-templates/footer.html" %}
-
 <script>
-  
-  (function(){
-    const input = document.getElementById("docSearch");
-    const items = document.querySelectorAll(".doc-item");
-    if(!input || !items.length) return;
+(function(){
+  const input = document.getElementById("docSearch");
+  const items = document.querySelectorAll(".doc-item");
+  const counter = document.getElementById("docCount");
 
-    input.addEventListener("input", function(){
-      const q = (input.value || "").toLowerCase().trim();
-      items.forEach(el=>{
-        const t = el.getAttribute("data-title") || "";
-        el.style.display = t.includes(q) ? "" : "none";
-      });
+  if(!input || !items.length || !counter) return;
+
+  function updateCounter(){
+    let visible = 0;
+
+    items.forEach(el=>{
+      if(el.style.display !== "none"){
+        visible++;
+      }
     });
-  })();
+
+    counter.textContent = visible;
+  }
+
+  input.addEventListener("input", function(){
+    const q = (input.value || "").toLowerCase().trim();
+
+    items.forEach(el=>{
+      const t = el.getAttribute("data-title") || "";
+      el.style.display = t.includes(q) ? "" : "none";
+    });
+
+    updateCounter();
+  });
+
+  // تحديث أولي عند تحميل الصفحة
+  updateCounter();
+})();
 </script>
